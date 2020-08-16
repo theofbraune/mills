@@ -16,9 +16,9 @@ def zeichnen(brett,weiss,schwarz):
     brett.felder[19].color,brett.felder[20].color,brett.felder[21].color,
     brett.felder[22].color,brett.felder[23].color)
     
-    print('Steine Weiss Hand',weiss.shand)
+    print('Steine Weiss/$ Hand',weiss.shand)
     print('  ------------------------------')
     print(x)
     print('  ------------------------------')
-    print('Steine Schwarz Hand',schwarz.shand)
+    print('Steine Schwarz/£ Hand',schwarz.shand)
     print('#################################')

@@ -62,7 +62,6 @@ class spielfeld:
         (self.felder[21],self.felder[13],self.felder[5])
         ]
         for a in self.felder[:23]:
-            #print('a.pos',a.pos)
             if a.pos%2==0:
                 a.conn = [self.felder[a.pos-1],self.felder[a.pos+1]]
             if a.pos%2==1:
@@ -81,7 +80,7 @@ class spielfeld:
 
 
 
-#print('Du kannst das Spiel starten, inden du play() eingibst')
+
 def check_correctness(weiss,schwarz,brett,pos):
     """ Input: both of the players, the board and the desired position/tuple. We check whether this is possible and Output True of False
     """
@@ -116,8 +115,6 @@ def turn_lay(weiss,schwarz,brett,pos):
     else:
         player=schwarz
         opponent =weiss
-    print('muss legen')
-    print('pos',pos)
     brett.felder[pos].color = player.color
     player.shand -=1
     if player.shand==0:
@@ -128,8 +125,6 @@ def turn_lay(weiss,schwarz,brett,pos):
 def turn_move(weiss,schwarz,brett,pos):
     """Input the two players and the board. Furthermore the move, i.e the positions as integer tuple. We check this before, so the position will be correct.
     """
-    print('muss ziehen')
-    print('pos',pos)
     if weiss.state==1:
         player=weiss
         opponent = schwarz
@@ -147,9 +142,6 @@ def check_new_mill(brett_alt,brett_neu):
     """
     for j in range(len(brett_neu.reihen)):
         if check_muehle(brett_neu.reihen[j])==True and check_muehle(brett_alt.reihen[j])==False:
-            print('unsere mühle', [brett_alt.reihen[j][i].pos for i in range(3)])
-            print('unsere mühle_alt', [brett_alt.reihen[j][i].color for i in range(3)])
-            print('unsere mühle_neu', [brett_neu.reihen[j][i].color for i in range(3)])
             return(True)
     return(False)
 
@@ -192,14 +184,11 @@ def wegnehmen_möglich(weiss,schwarz,brett):
         gegner=weiss
     else: 
         gegner=schwarz
-    #print(gegner.color,gegner.state)
+    
     for y in brett.felder:
         if y.color==gegner.color:
-            #print(y.pos)
-            #print('in muehle',check_in_muehle(y.pos))
+            
             if check_in_muehle(y.pos,brett)==False:
-                #print(check_in_muehle(y.pos))
-                #print(y.color)
                 return(True)
     return(False)
 

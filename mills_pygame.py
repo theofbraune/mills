@@ -1,6 +1,7 @@
 import pygame 
 import math as m 
 import muehlespiel_pygame as ms
+import muehleki as mki
 import copy
 
 pygame.init()
@@ -25,12 +26,13 @@ TITLE_FONT = pygame.font.SysFont('TeX Gyre Bonum Math',60)
 INIT_FONT = pygame.font.SysFont('Mathjax_Typewriter', 35)
 GAMEOVER_FONT = pygame.font.SysFont('LATO BLACK', 180)
 NEWGAME_FONT = pygame.font.SysFont('LATO BLACK',90)
+MILLS_FONT = pygame.font.SysFont('Mathjax_Typewriter', 50)
 
 
 
 #button variables
-height_small = 30
-radius_small = 15
+height_small = 35
+radius_small = 25
 height_big = 45
 radius_big = height_big/2
 
@@ -91,7 +93,6 @@ def determine_my_color():
             if event.type== pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 m_x, m_y = pygame.mouse.get_pos()
-                #print(m_x,m_y)
                 #loop over the buttons and determine whether we hit one of the buttons
                 if m.sqrt((m_x-400)**2+(m_y-600)**2)<=75:# check distance to the center of the black stone
                     chosing =  False
@@ -177,8 +178,6 @@ def get_information(board,weiss,schwarz):
                 chosing = False
             if event.type== pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                #print(pos)
-                #print(pos[0],pos[1])
                 for j in range(len(centers)):
                     #print('distance to center',j,'  ', distance(centers[j],pos))
                     if distance(centers[j],pos)<radius_small:
@@ -189,6 +188,9 @@ def get_information(board,weiss,schwarz):
 
 
 def mills_on_board(weiss, schwarz,brett):
+    """ Input: the two players and the board. 
+    it determines whether the current player is human or an AI
+    """
     #print('excecuted')
     if weiss.state==1:
         player=weiss
@@ -198,9 +200,12 @@ def mills_on_board(weiss, schwarz,brett):
         opponent = weiss
 
     if ms.wegnehmen_möglich(weiss,schwarz,brett)== False:
-        text = INIT_FONT.render('You have a mill but cannot remove a stone',1,BLUE)
+
+        text = INIT_FONT.render('There is a mill but one cannot remove a stone',1,BLUE)
         win.blit(text, (WIDTH/2 - text.get_width()/2, 850))
         pygame.display.update()
+        if player.human==False:
+            pygame.time.delay(1000)
     else:
         if player.color =='$':
             text = INIT_FONT.render('White has a mill and can remove a stone',1,BLUE)
@@ -211,21 +216,39 @@ def mills_on_board(weiss, schwarz,brett):
             text = INIT_FONT.render('Black has a mill and can remove a stone',1,BLUE)
             win.blit(text, (WIDTH/2 - text.get_width()/2, 920))
             pygame.display.update()
-
-        chosen=False
-        while not chosen:
-            index = get_information(brett,weiss,schwarz)
-            if brett.felder[index].color == opponent.color and ms.check_in_muehle(index,brett)==False:
-                brett.felder[index].color = '¤'
-                opponent.satall -=1
-                if opponent.satall<3:
-                    brett.gameover = True
-                    brett.reason = 'not_enough_stones'+opponent.color
-                chosen = True
+        if player.human==True:
+            chosen=False
+            while not chosen:
+                index = get_information(brett,weiss,schwarz)
+                if brett.felder[index].color == opponent.color and ms.check_in_muehle(index,brett)==False:
+                    brett.felder[index].color = '¤'
+                    opponent.satall -=1
+                    if opponent.satall<3:
+                        brett.gameover = True
+                        brett.reason = 'not_enough_stones'+opponent.color
+                    chosen = True
+        else:#the AI needs to be active
+            index = mki.wegnehmen(weiss,schwarz,brett)
+            #opponent.satall -=1
+            if opponent.satall<3:
+                brett.gameover = True
+                brett.reason = 'not_enough_stones'+opponent.color
+            #note that the board becomes changed
+            #draw a circle on the removed stone
+            #pygame.draw.circle(win,RED,)
         if opponent.shand==0 and opponent.satall==3:
             opponent.action = 'springen'
         draw([brett.felder[j].color for j in range(24)], weiss, schwarz)
-    
+        
+        
+        if player.human==False:
+            draw([brett.felder[j].color for j in range(24)], weiss, schwarz)
+            text = INIT_FONT.render('The AI has a mill and removes a stone',1,BLUE)
+            pygame.draw.circle(win,RED,centers[index],12)
+            win.blit(text, (WIDTH/2 - text.get_width()/2, 120))
+            pygame.display.update()
+            pygame.time.delay(2000)
+            draw([brett.felder[j].color for j in range(24)], weiss, schwarz)
 
 def game_on(brett, weiss, schwarz):
     drawcounter = 0
@@ -238,8 +261,30 @@ def game_on(brett, weiss, schwarz):
         else:
             player=schwarz
         if player.human==False:
-            #later
-            pass
+            #print('Die KI muss',player.action)
+            brett_old = copy.deepcopy(brett)
+            move = mki.ziehen(weiss,schwarz,brett)
+            brett_new = brett
+            
+            nm = ms.check_new_mill(brett_old,brett_new)
+            if type(move)==int:
+                draw([brett.felder[j].color for j in range(24)], weiss, schwarz)
+
+            if type(move)==tuple:# indicate the move of the AI by colored circles
+                pygame.draw.circle(win,GREEN,centers[move[0]],20)
+                pygame.display.update()
+                if nm:#if there is a mill
+                    pygame.time.delay(2000)
+                else:
+                    pygame.time.delay(500)
+                draw([brett.felder[j].color for j in range(24)], weiss, schwarz)
+
+            if nm==True:
+                #reset drawcounter
+                drawcounter = 0
+                mills_on_board(weiss, schwarz,brett)
+            
+
         else:
             entered = False
             if player.action=='legen':
@@ -364,7 +409,7 @@ def game_on(brett, weiss, schwarz):
         if reason=='got_stuck':
             new_text = INIT_FONT.render("White has won, since black is unable to move!!",1,BLACK)
 
-    if loser=='s':
+    if loser=='s':# because the reaseon is 'draw by moves' hence 's' is the last letter.
         new_text = INIT_FONT.render("Draw!! Because of 60 moves without a mill",1,BLACK)
 
     win.blit(new_text, (WIDTH/2 - new_text.get_width()/2, 600))
@@ -395,10 +440,10 @@ def game_on(brett, weiss, schwarz):
             
 def main():
     my_color = determine_my_color()
-    print('my color', my_color)
+    #print('my color', my_color)
 
     opponent_type = determine_ai()
-    print('opponent_type', opponent_type)
+    #print('opponent_type', opponent_type)
 
     if my_color =='$':#this means white
         if opponent_type == 'ai':

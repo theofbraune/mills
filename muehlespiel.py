@@ -113,7 +113,7 @@ def zug(weiss, schwarz,brett):
         spieler = schwarz
         gegner = weiss
     # pruefe, welche aktion der spieler in diesen Zug ausfurhren muss, ziehen, legen oder springen
-    if spieler.shand!=0:
+    if spieler.shand>0:
         spieler.action = 'legen'
     elif spieler.shand==0 and spieler.satall>3:
         spieler.action = 'ziehen'
@@ -125,11 +125,11 @@ def zug(weiss, schwarz,brett):
         #print('müsste zug machen')
         dataexchange(brett,weiss,schwarz)
         if spieler.action=='legen':
-            eingabe = muehleki.ziehen()
-            brett.felder[eingabe].color = spieler.color
+            muehleki.ziehen(weiss,schwarz,brett)
+            #brett.felder[eingabe].color = spieler.color
             muehlespiel_brett.zeichnen(brett,weiss,schwarz)
-            spieler.shand-=1
-            gesetzt=eingabe
+            #spieler.shand-=1
+            #gesetzt=eingabe
             if spieler.shand==0:
                 spieler.action = 'ziehen'
         elif spieler.action=='ziehen':
@@ -139,21 +139,22 @@ def zug(weiss, schwarz,brett):
                 print('Kein Zug mehr möglich')
                 return(spieler)
             else:
-                a = muehleki.ziehen()
-                start = a[0]
-                ende = a[1]
-                brett.felder[ende].color = spieler.color
-                brett.felder[start].color = '¤'
+                #a = muehleki.ziehen()
+                #start = a[0]
+                #ende = a[1]
+                muehleki.ziehen(weiss,schwarz,brett)
+                #brett.felder[ende].color = spieler.color
+                #brett.felder[start].color = '¤'
                 muehlespiel_brett.zeichnen(brett,weiss,schwarz)
-                gesetzt=ende
+                #gesetzt=ende
         elif spieler.action=='springen':
-            a = muehleki.ziehen()
-            start = a[0]
-            ende = a[1]
-            brett.felder[ende].color = spieler.color
-            brett.felder[start].color = '¤'
+            muehleki.ziehen(weiss,schwarz,brett)
+            #start = a[0]
+            #ende = a[1]
+            #brett.felder[ende].color = spieler.color
+            #brett.felder[start].color = '¤'
             muehlespiel_brett.zeichnen(brett,weiss,schwarz)
-            gesetzt=ende
+            #gesetzt=ende
             #print(x)
     else:
         if spieler.action =='legen':
@@ -248,6 +249,11 @@ def zug(weiss, schwarz,brett):
 
     #print(gesetzt)
     #pruefe muehle 
+
+    #################
+    """
+    CAUTION!! still errors here below!!!!!
+    """
     for r in brett.reihen:
         #print(':-)')
         if (gesetzt in [s.pos for s in r]) and check_muehle(r):
@@ -260,9 +266,9 @@ def zug(weiss, schwarz,brett):
                     print('Du hast eine Mühle, kannst aber keinen Stein entfernen')
                 else:
                     #print('Fall 1')
-                    stein = muehleki.wegnehmen()
+                    stein = muehleki.wegnehmen(weiss, schwarz, brett)
                     print('Die KI hat den Stein',stein,'weggenommen.')
-                    brett.felder[stein].color = '¤'
+                    #brett.felder[stein].color = '¤'
                     muehlespiel_brett.zeichnen(brett,weiss,schwarz)
                     gegner.satall-=1
                     if gegner.satall==3:
@@ -376,28 +382,35 @@ def dataexchange(brett,weiss,schwarz):
    
 def play():
     #reset()
-    print('Du spielst mit $ gegen £.')
 
-    x = input('Möchtest du gegen eine KI spielen? (Y/N)')
-    global weiss
-    global schwarz
-    if x=='Y':
-        weiss = player('£',False)
+    y = input('Möchtest du beginnen? (Y/N)')
+    if y=='Y':
+        my_color = '$'
+        opponent_color = '£'
     else:
-        weiss = player('£',True)
-    schwarz = player('$',True)
+        opponent_color = '$'
+        my_color = '£' 
+    
+    x = input('Möchtest du gegen eine KI spielen? (Y/N)')
+    if x=='Y':
+        if my_color=='$':
+            weiss = player('$',True)
+            schwarz = player('£', False)
+        elif my_color== '£':
+            weiss = player('$',False)
+            schwarz = player('£', True)
     if x=='N':
         z = input('Sollen 2 KIs gegeneinander spielen? (Y/N)')
         if z=='Y':
             weiss= player('£',False)
             schwarz= player('$',False)
-    y = input('Möchtest du beginnen? (Y/N)')
-    if y=='Y':
-        schwarz.state = 1
-        weiss.state = 0
-    else:
-        schwarz.state = 0
-        weiss.state = 1
+    weiss.state = 1
+    schwarz.state = 0
+
+
+
+
+
     #testumgebung
     """
     weiss= player('£',False)
