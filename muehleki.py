@@ -110,7 +110,10 @@ def ziehen( weiss, schwarz,brett):
             player.action = 'ziehen'
         return(index)
     elif action=='ziehen':
-
+        if len(moeglzuege(spielfarbe,brett))==0:
+            brett.gameover = True
+            brett.reason = 'got_stuck'+player.color
+            return('over')
         zug = random.choice(moeglzuege(spielfarbe,brett))
         start = zug[0]    
         end = zug[1]

@@ -55,9 +55,13 @@ pygame.display.update()
 centers= [(222, 246), (498, 246), (770, 246), (774, 520), (775, 795), (499, 794), (224, 792), (224, 521), (299, 323), (498, 320), (696, 320), (699, 520), (700, 718), (499, 719), (301, 716), (299, 520), (374, 394), (498, 391), (623, 396), (622, 520), (624, 642), (500, 646), (374, 644), (373, 520)]
 positions = [(centers[j][0]-height_small/2,centers[j][1]-height_small/2) for j in range(24)]
 
+#Imgages of the stones and fields
 small_black = pygame.image.load('small_blackstone.png')
 big_black = pygame.image.load('big_blackstone.png')
 big_white = pygame.image.load('whitestone.png')
+small_black_cursor = pygame.image.load('small_blackstone_cursor.png')
+big_black_cursor = pygame.image.load('big_blackstone_cursor.png')
+big_white_cursor = pygame.image.load('whitestone_cursor.png')
 
 def distance(x,y):
     return(m.sqrt((x[0]-y[0])**2 + (x[1]-y[1])**2))
@@ -165,22 +169,31 @@ def draw(L,weiss,schwarz):
             win.blit(big_white,(x-height_big/2,y-height_big/2))
     pygame.display.update()
 
-def get_information(board,weiss,schwarz):
+def get_information(brett,weiss,schwarz):
     """ Input: the player information, the board, returns the button we clicked on
     """
+    #determine the player and opponent
+    if weiss.state==1:
+        player = weiss
+        opponent = schwarz
+    else:
+        player = schwarz
+        opponent = weiss
+
     #loop until we chose a button
     chosing = True
     while chosing:
-        clock.tick(FPS)
+        clock.tick(FPS//3)
         for event in pygame.event.get():
             if event.type ==pygame.QUIT:
                 pygame.quit()
                 chosing = False
+
             if event.type== pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 for j in range(len(centers)):
                     #print('distance to center',j,'  ', distance(centers[j],pos))
-                    if distance(centers[j],pos)<radius_small:
+                    if distance(centers[j],pos)<radius_small+10:
                         chosing = False
                         return(j)
 
@@ -432,10 +445,6 @@ def game_on(brett, weiss, schwarz):
                     if 850<m_y<850+height_rect:
                         win.fill((100,100,35))
                         main()
-
-
-    
-    
 
             
 def main():
