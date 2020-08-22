@@ -218,3 +218,4 @@ def dataexchange(brett,weiss,schwarz):
         l+=b.color
     f = open("datasave.txt","w")
     f.write(l)
+    

@@ -86,8 +86,6 @@ def wegn_gegner(color,brett):
                 L.append(j)
     return(L)
 
-    
-
 
 def ziehen( weiss, schwarz,brett):
     """ Funktion, die Zug ausführt und dabei schaut, welcher Zug auszuführen ist.

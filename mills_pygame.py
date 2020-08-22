@@ -445,8 +445,7 @@ def game_on(brett, weiss, schwarz):
                     if 850<m_y<850+height_rect:
                         win.fill((100,100,35))
                         main()
-
-            
+        
 def main():
     my_color = determine_my_color()
     #print('my color', my_color)
