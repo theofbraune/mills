@@ -59,9 +59,9 @@ positions = [(centers[j][0]-height_small/2,centers[j][1]-height_small/2) for j i
 small_black = pygame.image.load('small_blackstone.png')
 big_black = pygame.image.load('big_blackstone.png')
 big_white = pygame.image.load('whitestone.png')
-small_black_cursor = pygame.image.load('small_blackstone_cursor.png')
-big_black_cursor = pygame.image.load('big_blackstone_cursor.png')
-big_white_cursor = pygame.image.load('whitestone_cursor.png')
+#small_black_cursor = pygame.image.load('small_blackstone_cursor.png')
+#big_black_cursor = pygame.image.load('big_blackstone_cursor.png')
+#big_white_cursor = pygame.image.load('whitestone_cursor.png')
 
 def distance(x,y):
     return(m.sqrt((x[0]-y[0])**2 + (x[1]-y[1])**2))
