@@ -490,7 +490,7 @@ while run:
         if event.type ==pygame.QUIT:
             pygame.quit()
             run = False
-pygame.quit()
+#pygame.quit()
 
 
     #pygame.display.update()
