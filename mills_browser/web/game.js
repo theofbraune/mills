@@ -42,16 +42,18 @@ const box = document.getElementById('msg_box');
 var new_mill;
 var value_stones = ['$','$','£','¤','¤','¤','¤','¤','¤','£','£','£','$','¤','¤','¤','¤','$','¤','¤','¤','¤','¤','¤'];
 var stones = Array(24).fill('¤');
+var stones;
 
 
 //create a loop to bind the clicking function to the buttons
 
 //Create the main game objects, the players and the game object
-var main_game = new game('human','human');
+//var main_game = new game('human','human');
+var main_game;
 
-var player1 = new player('white',main_game.white);
-var player2 = new player('black',main_game.black);
-
+//var player1 = new player('white',main_game.white);
+//var player2 = new player('black',main_game.black);
+var player1, player2;
 
 /*-------- Definition of function to initialize the game --------*/
 function initialize_game(){
@@ -62,12 +64,47 @@ function initialize_game(){
     }
     box.innerHTML = "White needs to put down a stone."
     stones = Array(24).fill('¤');
-    main_game = new game('human','human');
-
+    var bt_white = document.getElementById('bt_cl_1').innerHTML;
+    var bt_black = document.getElementById('bt_cl_2').innerHTML;
+    if (bt_white=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
+        if(bt_black=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('human','human');
+        }
+        if(bt_black=='AI <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('human','ai')
+        }
+    }
+    if (bt_white=='AI <span class="arrowBtn" id="lb_1">↻</span>'){
+        if(bt_black=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('ai','human');
+        }
+        if(bt_black=='AI <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('ai','ai')
+        }
+    }
+    //main_game = new game('human','human');
     player1 = new player('white',main_game.white);
     player2 = new player('black',main_game.black);
     draw_the_field(stones)
     document.getElementById("bt_start").innerHTML = "Restart";
+}
+
+function switch_a() {
+    const bt1 = document.getElementById('bt_cl_1');
+    if(bt1.innerHTML=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
+        bt1.innerHTML='AI <span class="arrowBtn" id="lb_1">↻</span>';
+    }else{
+        bt1.innerHTML='Human <span class="arrowBtn" id="lb_1">↻</span>';
+    }
+}
+
+function switch_b() {
+    const bt1 = document.getElementById('bt_cl_2');
+    if(bt1.innerHTML=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
+        bt1.innerHTML='AI <span class="arrowBtn" id="lb_1">↻</span>';
+    }else{
+        bt1.innerHTML='Human <span class="arrowBtn" id="lb_1">↻</span>';
+    }
 }
 
 /*-------- Definition of functions for displaying the game --------*/
@@ -186,6 +223,8 @@ draw_the_field(stones);
 /*-------- Definition of our main function --------*/
 function clicking(index){
     //check whether we are in the case that we need to remove a stone
+    console.log(player1);
+    console.log(player2);
     if (new_mill==true){
         if(!contained_in_mill(index,stones)){
             console.log('entered');
