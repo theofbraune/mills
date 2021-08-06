@@ -31,39 +31,74 @@
             </div>
         </nav>
         <div class = "message__box" id = "msg_box">
-            White needs to put down a stone.
+            You can start the game by pressing the start button.
         </div>
         <div class="sidebar__container">
+            
             <ul class = "sidebar__stats">
-
+                <li class = "sidebar__header">
+                    <h2>Settings </h2>
+                </li>
+                <li class = "sidebar__color_select">
+                    <div class="sidebar__wrap">
+                        <div class="color__selector" style="padding-bottom: 25px;padding-top: 25px;">
+                            <p style="margin-left: 10px;">White</p> 
+                            <button>White</button>
+                        </div>
+                        <div class="color__selector" style="padding-bottom: 25px;">
+                            <p style="margin-left: 10px;">Black</p>
+                            <button>Black</button>
+                        </div>
+                    </div>
+                </li>
+                
+                <li class = "sidebar__items_online">
+                    <div class="sidebar__wrap">
+                        <div class="generate__link" style="padding-bottom: 25px;padding-top: 25px;padding-right: 10px;padding-left: 10px;">
+                            <button class = "button__online">Generate </button>
+                            <input class="field__link" id="input1" type="text">
+                        </div>
+                        <div class="insert__link" style="padding-bottom: 25px;padding-right: 10px;padding-left: 10px;">
+                            <button class = "button__online">Insert</button>
+                            <input class="field__link" id="input2" type="text">
+                        </div>
+                    </div>
+                </li>
+                
+                <li class = "sidebar__button">
+                    <div class="wrapper__play__button">
+                        <a class="button_start" id="bt_start" onclick = "initialize_game()">Start</a>
+                    </div>
+                    
+                </li>
             </ul>
         </div>
         
         <div class = "game__container" id="game_container">
-            <input class="field__mills" type="button" id = 'bt_0' onclick="clicking(0)">
-            <input class="field__mills" type="button" id = 'bt_1' onclick="clicking(1)">
-            <input class="field__mills" type="button" id = 'bt_2' onclick="clicking(2)">
-            <input class="field__mills" type="button" id = 'bt_3' onclick="clicking(3)">
-            <input class="field__mills" type="button" id = 'bt_4' onclick="clicking(4)">
-            <input class="field__mills" type="button" id = 'bt_5' onclick="clicking(5)">
-            <input class="field__mills" type="button" id = 'bt_6' onclick="clicking(6)">
-            <input class="field__mills" type="button" id = 'bt_7' onclick="clicking(7)">
-            <input class="field__mills" type="button" id = 'bt_8' onclick="clicking(8)">
-            <input class="field__mills" type="button" id = 'bt_9' onclick="clicking(9)">
-            <input class="field__mills" type="button" id = 'bt_10' onclick="clicking(10)">
-            <input class="field__mills" type="button" id = 'bt_11' onclick="clicking(11)">
-            <input class="field__mills" type="button" id = 'bt_12' onclick="clicking(12)">
-            <input class="field__mills" type="button" id = 'bt_13' onclick="clicking(13)">
-            <input class="field__mills" type="button" id = 'bt_14' onclick="clicking(14)">
-            <input class="field__mills" type="button" id = 'bt_15' onclick="clicking(15)">
-            <input class="field__mills" type="button" id = 'bt_16' onclick="clicking(16)">
-            <input class="field__mills" type="button" id = 'bt_17' onclick="clicking(17)">
-            <input class="field__mills" type="button" id = 'bt_18' onclick="clicking(18)">
-            <input class="field__mills" type="button" id = 'bt_19' onclick="clicking(19)">
-            <input class="field__mills" type="button" id = 'bt_20' onclick="clicking(20)">
-            <input class="field__mills" type="button" id = 'bt_21' onclick="clicking(21)">
-            <input class="field__mills" type="button" id = 'bt_22' onclick="clicking(22)">
-            <input class="field__mills" type="button" id = 'bt_23' onclick="clicking(23)">
+            <input class="field__mills" type="button" id = 'bt_0' onclick="clicking(0)" disabled>
+            <input class="field__mills" type="button" id = 'bt_1' onclick="clicking(1)" disabled>
+            <input class="field__mills" type="button" id = 'bt_2' onclick="clicking(2)" disabled>
+            <input class="field__mills" type="button" id = 'bt_3' onclick="clicking(3)" disabled>
+            <input class="field__mills" type="button" id = 'bt_4' onclick="clicking(4)" disabled>
+            <input class="field__mills" type="button" id = 'bt_5' onclick="clicking(5)" disabled>
+            <input class="field__mills" type="button" id = 'bt_6' onclick="clicking(6)" disabled>
+            <input class="field__mills" type="button" id = 'bt_7' onclick="clicking(7)" disabled>
+            <input class="field__mills" type="button" id = 'bt_8' onclick="clicking(8)" disabled>
+            <input class="field__mills" type="button" id = 'bt_9' onclick="clicking(9)" disabled>
+            <input class="field__mills" type="button" id = 'bt_10' onclick="clicking(10)" disabled>
+            <input class="field__mills" type="button" id = 'bt_11' onclick="clicking(11)" disabled>
+            <input class="field__mills" type="button" id = 'bt_12' onclick="clicking(12)" disabled>
+            <input class="field__mills" type="button" id = 'bt_13' onclick="clicking(13)" disabled>
+            <input class="field__mills" type="button" id = 'bt_14' onclick="clicking(14)" disabled>
+            <input class="field__mills" type="button" id = 'bt_15' onclick="clicking(15)" disabled>
+            <input class="field__mills" type="button" id = 'bt_16' onclick="clicking(16)" disabled>
+            <input class="field__mills" type="button" id = 'bt_17' onclick="clicking(17)" disabled>
+            <input class="field__mills" type="button" id = 'bt_18' onclick="clicking(18)" disabled>
+            <input class="field__mills" type="button" id = 'bt_19' onclick="clicking(19)" disabled>
+            <input class="field__mills" type="button" id = 'bt_20' onclick="clicking(20)" disabled>
+            <input class="field__mills" type="button" id = 'bt_21' onclick="clicking(21)" disabled>
+            <input class="field__mills" type="button" id = 'bt_22' onclick="clicking(22)" disabled>
+            <input class="field__mills" type="button" id = 'bt_23' onclick="clicking(23)" disabled>
         </div>
     </div>
     

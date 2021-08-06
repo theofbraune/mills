@@ -126,7 +126,128 @@ body{
     border: 1px solid #000000;
     border-radius: 10px;
 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+
 }
+.sidebar__stats{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-around;
+    list-style: none;
+    text-align: center;
+    height: 100%;
+}
+.sidebar__wrap{
+    border: 1px solid #000000;
+    border-radius: 10px;
+}
+.sidebar__color_select{
+    width:100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.color__selector{
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.sidebar__items_online{   
+    width:100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;   
+}
+
+.generate__link{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.insert__link{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.button__online{
+    display: flex;
+    justify-content: center;
+    text-decoration:none;
+    padding: 10px 20px;
+    height: 100%;
+    width: 60%;
+    outline: none;
+    border: none;
+    align-items: center;
+    border-radius: 5px;
+    background:#000000;
+    color: greenyellow;
+    margin-bottom: 15px;
+}
+
+.button__online:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+
+
+.field__link[type=text]{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+
+
+
+.sidebar__button{
+    padding-left: 10px;
+    padding-right: 10px;
+    justify-content:flex-end;
+    display: flex;
+    width: 100%;
+
+}
+
+.wrapper__play__button{
+    width:100%;
+}
+
+.button_start{
+    display: flex;
+    justify-content: center;
+    text-decoration:none;
+    padding: 10px 20px;
+    height: 100%;
+    width: 100%;
+    outline: none;
+    border: none;
+    align-items: center;
+    border-radius: 20px;
+    background:#f77762;
+    color: white;
+}
+
+.button_start:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+
+
 .message__box{
     border: 1px solid #000000;
     font-family: 'Roboto Mono', monospace;
