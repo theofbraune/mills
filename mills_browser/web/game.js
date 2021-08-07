@@ -681,3 +681,34 @@ function check_connected(idx1, idx2){
     } 
 }
 
+function generate_neighbours(index){
+    /*
+    Input: The index of a field.
+    Output: Array of neighbouring positions.
+    */
+    var neighbours = [];
+    for (var j=0;j<24;j++){
+        if(check_connected(index,j)){
+            neighbours.push(j);
+        }
+    }
+    return neighbours;
+}
+
+function check_move_possible(color){
+    /*
+    Input: The color in the form '$' or '£'
+    Output: The information whether it is possible to move a stone.
+    */
+    for (var ind = 0; ind<24; ind++){
+        if (stones[ind]==color){
+            var nbs = generate_neighbours(ind);
+            var nbs_colors = nbs.map(i =>stones[i]);
+            if (nbs_colors.includes('¤')){
+                return true;
+            }
+        }
+    }
+    return false;
+
+}
