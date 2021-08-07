@@ -39,10 +39,10 @@ var clicked_array = Array(24).fill(0);
 var positions = array_of_positions(width,height);
 var bt_now;
 const box = document.getElementById('msg_box');
-var new_mill;
-var value_stones = ['$','$','£','¤','¤','¤','¤','¤','¤','£','£','£','$','¤','¤','¤','¤','$','¤','¤','¤','¤','¤','¤'];
+var new_mill=false;
+var value_stones = ['$','$','¤','$','£','¤','¤','£','¤','¤','£','£','¤','¤','¤','£','¤','$','¤','¤','¤','¤','¤','¤'];
 var stones = Array(24).fill('¤');
-var stones;
+//var stones = value_stones;
 
 
 //create a loop to bind the clicking function to the buttons
@@ -64,6 +64,7 @@ function initialize_game(){
     }
     box.innerHTML = "White needs to put down a stone."
     stones = Array(24).fill('¤');
+    //stones = value_stones;
     var bt_white = document.getElementById('bt_cl_1').innerHTML;
     var bt_black = document.getElementById('bt_cl_2').innerHTML;
     if (bt_white=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
@@ -86,6 +87,7 @@ function initialize_game(){
     player1 = new player('white',main_game.white);
     player2 = new player('black',main_game.black);
     draw_the_field(stones)
+
     document.getElementById("bt_start").innerHTML = "Restart";
 }
 
@@ -223,120 +225,361 @@ draw_the_field(stones);
 /*-------- Definition of our main function --------*/
 function clicking(index){
     //check whether we are in the case that we need to remove a stone
-    console.log(player1);
-    console.log(player2);
-    if (new_mill==true){
-        if(!contained_in_mill(index,stones)){
-            console.log('entered');
-            if(player1.state==0){//this is the color we need to remove, i.e white/'£'
-                if(stones[index]=='$'){
-                    new_mill=false;
-                    stones[index]='¤';
-                    player2.stones_atall-=1;
-                    console.log(stones);
-                    draw_the_field(stones);
-                    box.innerHTML = 'Black needs to put down a stone.';
-                    console.log(player1);
-                    console.log(player2)
+    if(main_game.gameover==false){
+        console.log('clicked');
+        if (new_mill==true){
+            if(!contained_in_mill(index,stones)){
+                console.log('entered');
+                if(player1.state==0){//this is the color we need to remove, i.e white/'£'
+                    if(stones[index]=='$'){
+                        new_mill=false;
+                        stones[index]='¤';
+                        player2.stones_atall-=1;
+                        console.log(stones);
+                        draw_the_field(stones);
+                        if (player2.stones_atall==3){
+                            player2.action='jump';
+                            box.innerHTML = 'Black needs to jump.';
+                        }
+                        if(player2.action=='put'){
+                            box.innerHTML = 'Black needs to put down a stone.';
+                        }
+                        if(player2.action=='move'){
+                            box.innerHTML = 'Black needs to move a stone.';
+                        }
+                        if(player2.action=='jump'){
+                            box.innerHTML = 'Black needs to jump.';
+                        }
+                        console.log(player1);
+                        console.log(player2)
+                    }
                 }else{
-                    box.innerHTML = 'You cannot take your own stone.';
+                    if(stones[index]=='£'){
+                        new_mill=false;
+                        stones[index]='¤';
+                        player1.stones_atall-=1;
+                        console.log(stones);
+                        draw_the_field(stones);
+                        if (player1.stones_atall==3){
+                            player1.action='jump';
+                            box.innerHTML = 'White needs to jump.';
+                        }
+                        if(player1.action=='put'){
+                            box.innerHTML = 'White needs to put down a stone.';
+                        }
+                        if(player1.action=='move'){
+                            box.innerHTML = 'White needs to move a stone.';
+                        }
+                        if(player1.action=='jump'){
+                            box.innerHTML = 'White needs to jump.';
+                        }
+                        console.log(player2);
+                        console.log(player1);
+                    }
                 }
-            }else{
-                if(stones[index]=='£'){
-                    new_mill=false;
-                    stones[index]='¤';
-                    player1.stones_atall-=1;
-                    console.log(stones);
-                    draw_the_field(stones);
-                    box.innerHTML = 'White needs to put down a stone.';
-
-                    console.log(player2);
-                    console.log(player1);
-                }else{
-                    box.innerHTML = 'You cannot take your own stone.';
+                if((player1.stones_atall==2) ||(player2.stones_atall==2)){
+                    main_game.gameover=true;
+                    box.innerHTML='Game Over!!'
                 }
             }
-            if(player1.stones_atall==2 ||player2.stones_atall==2){
-                main_game.gameover=true;
+        }else{
+            if(main_game.gameover==false){
+            //handle the case that we do a move and don't take a stone away     
+            if (player1.state==1){
+            if (player1.human == 'human'){
+                
+                if (player1.action=='put'){
+                    if(stones[index]=='¤'){
+                        /*create a deep copy of the stone positions in order to check 
+                        if there are new mills*/
+                        var stones_copy = Object.assign({},stones);
+                        stones[index] = '£';
+                        player1.stones_hand-=1;
+                        
+                        box.innerHTML = 'Black needs to put down a stone.'
+                        if(player1.stones_hand==0 && player1.stones_atall>3){
+                            player1.action='move';
+                            box.innerHTML = 'Black needs to put down a stone.';
+                        }
+                        draw_the_field(stones);
+                        clicked_array = Array(24).fill(0);
+                        //check mills here
+                        //console.log(check_new_mills(stones_copy,stones));
+                        if(check_new_mills(stones_copy,stones)){
+                            //console.log(taking_stone_possible(stones,player2.color));
+                            if(taking_stone_possible(stones,player2.color)){
+                                box.innerHTML = 'White has a mill and can remove a stone.';
+                                new_mill=true;
+                            }else{
+                                box.innerHTML = 'White has a mill, but cannot remove a stone, as all stones are blocked.'
+                            }
+                        }
+                        player1.state=0;
+                        player2.state=1;
+                    }
+                    
+                }
+                else if(player1.action=='move'){
+                    console.log('moving');
+                    
+                    //check whether one can move at all
+                    if (clicked_array.includes(1)==false){
+                        console.log('add the first index: ', index);
+                        clicked_array[index]=1;   
+                    }else{
+                        if(clicked_array[index]!==1){
+                            clicked_array[index]=2;
+                            var idx1 = clicked_array.indexOf(1);
+                            var idx2 = clicked_array.indexOf(2);
+                            console.log(idx1);
+                            console.log(idx2);
+                            if (stones[idx1]=='£' && stones[idx2]=='¤'){
+                                console.log('good colors');
+                                if(check_connected(idx1,idx2)){
+                                    console.log('connected');
+                                    var stones_copy = Object.assign({},stones);
+                                    stones[idx1]='¤';
+                                    stones[idx2]='£';
+                                    draw_the_field(stones);
+
+                                    
+                                    console.log(check_new_mills(stones_copy,stones));
+                                    if(check_new_mills(stones_copy,stones)){
+                                        console.log(taking_stone_possible(stones,player2.color));
+                                        if(taking_stone_possible(stones,player2.color)){
+                                            box.innerHTML = 'White has a mill and can remove a stone.';
+                                            new_mill=true;
+                                        }else{
+                                            box.innerHTML = 'White has a mill, but cannot remove a stone, as all stones are blocked.'
+                                        }
+                                    }
+                                    
+                                    player1.state=0;
+                                    player2.state=1;
+                                    if(new_mill==false){
+                                        if (player2.action=='put'){
+                                            box.innerHTML = 'Black needs to put down a stone';
+                                        }
+                                        else if(player2.action=='move'){
+                                            box.innerHTML = 'Black needs to move';
+                                        }
+                                        else if(player2.action=='jump'){
+                                            box.innerHTML = 'Black needs to jump';
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                            //check whether the two fields are connected
+
+                            clicked_array = Array(24).fill(0);
+                            
+                        }
+                    }
+                
+                }
+                else if(player1.action=='jump'){
+                    console.log('jumping');
+                    if (clicked_array.includes(1)==false){
+                        console.log('add the first index: ', index);
+                        clicked_array[index]=1;   
+                    }else{
+                        if(clicked_array[index]!==1){
+                            clicked_array[index]=2;
+                            var idx1 = clicked_array.indexOf(1);
+                            var idx2 = clicked_array.indexOf(2);
+                            console.log(idx1);
+                            console.log(idx2);
+                            if (stones[idx1]=='£' && stones[idx2]=='¤'){
+                                console.log('good colors');
+                                
+                                console.log('connected');
+                                var stones_copy = Object.assign({},stones);
+                                stones[idx1]='¤';
+                                stones[idx2]='£';
+                                draw_the_field(stones);
+
+                                
+                                console.log(check_new_mills(stones_copy,stones));
+                                if(check_new_mills(stones_copy,stones)){
+                                    console.log(taking_stone_possible(stones,player2.color));
+                                    if(taking_stone_possible(stones,player2.color)){
+                                        box.innerHTML = 'White has a mill and can remove a stone.';
+                                        new_mill=true;
+                                    }else{
+                                        box.innerHTML = 'White has a mill, but cannot remove a stone, as all stones are blocked.'
+                                    }
+                                }
+                                
+                                player1.state=0;
+                                player2.state=1;
+                                if(new_mill==false){
+                                    if (player2.action=='put'){
+                                        box.innerHTML = 'Black needs to put down a stone';
+                                    }
+                                    else if(player2.action=='move'){
+                                        box.innerHTML = 'Black needs to move';
+                                    }
+                                    else if(player2.action=='jump'){
+                                        box.innerHTML = 'Black needs to jump';
+                                    }
+                                    
+                                }
+                                    
+                                
+                            }
+                            //check whether the two fields are connected
+
+                            clicked_array = Array(24).fill(0);
+                            
+                        }
+                    }
+                }
+            }else{
+                //let the AI move
+            }
+            }else{
+                if (player2.human == 'human'){
+                if (player2.action=='put'){
+                    if(stones[index]=='¤'){
+                        var stones_copy = Object.assign({},stones) ;
+                        stones[index] = '$';
+                        player2.stones_hand-=1;
+                        box.innerHTML = 'White needs to put down a stone.'
+                        if(player2.stones_hand==0 && player2.stones_atall>3){
+                            player2.action='move';
+                            box.innerHTML = 'White needs to move a stone.'
+                        }
+                        draw_the_field(stones);
+                        clicked_array = Array(24).fill(0);
+                        //check mills here
+                        if(check_new_mills(stones_copy,stones)){
+                            if(taking_stone_possible(stones,player1.color)){
+                                box.innerHTML = 'Black has a mill and can remove a stone.';
+                                new_mill=true;
+                            }else{
+                                box.innerHTML = 'Black has a mill, but cannot remove a stone, as all stones are blocked.'
+                            }
+                        }
+                        player1.state=1;
+                        player2.state=0;
+                        if(player2.stones_hand==0){
+                            box.innerHTML = 'White needs to move a stone.'
+                        }
+                    }
+                    
+                }
+                else if(player2.action=='move'){
+                    
+                    //check whether one can move at all
+                    if (clicked_array.includes(1)==false){
+                        console.log('add the first index: ', index);
+                        clicked_array[index]=1;   
+                    }else{
+                        if(clicked_array[index]!==1){
+                            clicked_array[index]=2;
+                            var idx1 = clicked_array.indexOf(1);
+                            var idx2 = clicked_array.indexOf(2);
+                            console.log(idx1);
+                            console.log(idx2);
+                            if (stones[idx1]=='$' && stones[idx2]=='¤'){
+                                console.log('good colors');
+                                if(check_connected(idx1,idx2)){
+                                    console.log('connected');
+                                    var stones_copy = Object.assign({},stones);
+                                    stones[idx1]='¤';
+                                    stones[idx2]='$';
+                                    draw_the_field(stones);
+                                    
+                                    console.log(check_new_mills(stones_copy,stones));
+                                    if(check_new_mills(stones_copy,stones)){
+                                        //console.log(taking_stone_possible(stones,player2.color));
+                                        if(taking_stone_possible(stones,player1.color)){
+                                            box.innerHTML = 'Black has a mill and can remove a stone.';
+                                            new_mill=true;
+                                        }else{
+                                            box.innerHTML = 'Black has a mill, but cannot remove a stone, as all stones are blocked.'
+                                        }
+                                    }
+                                    player1.state=1;
+                                    player2.state=0;
+                                    if(new_mill==false){
+                                        box.innerHTML = 'White needs to move a stone';
+                                    }
+                                    
+                                }
+                            }
+                            //check whether the two fields are connected
+
+                            clicked_array = Array(24).fill(0);
+                            
+                        }
+                    }
+                    
+                }
+                else if (player2.action=='jump'){
+                    console.log('jumping');
+                    if (clicked_array.includes(1)==false){
+                        console.log('add the first index: ', index);
+                        clicked_array[index]=1;   
+                    }else{
+                        if(clicked_array[index]!==1){
+                            clicked_array[index]=2;
+                            var idx1 = clicked_array.indexOf(1);
+                            var idx2 = clicked_array.indexOf(2);
+                            console.log(idx1);
+                            console.log(idx2);
+                            if (stones[idx1]=='$' && stones[idx2]=='¤'){
+                                console.log('good colors');
+                                {
+                                    console.log('connected');
+                                    var stones_copy = Object.assign({},stones);
+                                    stones[idx1]='¤';
+                                    stones[idx2]='$';
+                                    draw_the_field(stones);
+                                    
+                                    console.log(check_new_mills(stones_copy,stones));
+                                    if(check_new_mills(stones_copy,stones)){
+                                        //console.log(taking_stone_possible(stones,player2.color));
+                                        if(taking_stone_possible(stones,player1.color)){
+                                            box.innerHTML = 'Black has a mill and can remove a stone.';
+                                            new_mill=true;
+                                        }else{
+                                            box.innerHTML = 'Black has a mill, but cannot remove a stone, as all stones are blocked.'
+                                        }
+                                    }
+                                    player1.state=1;
+                                    player2.state=0;
+                                    if(new_mill==false){
+                                        if (player1.action=='put'){
+                                            box.innerHTML = 'White needs to put down a stone';
+                                        }
+                                        else if(player1.action=='move'){
+                                            box.innerHTML = 'White needs to move';
+                                        }
+                                        else if(player1.action=='jump'){
+                                            box.innerHTML = 'White needs to jump';
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                            //check whether the two fields are connected
+
+                            clicked_array = Array(24).fill(0);
+                            
+                        }
+                    }
+                }
+                }else{
+                    //let the AI move
+                }
+            } 
+            
             }
         }
     }else{
-        //handle the case that we do a move and don't take a stone away
-        clicked_array[index]= 1;     
-        if (player1.state==1){
-        if (player1.human = 'human'){
-            if (player1.action=='put'){
-                if(stones[index]=='¤'){
-                    /*create a deep copy of the stone positions in order to check 
-                    if there are new mills*/
-                    var stones_copy = Object.assign({},stones);
-                    stones[index] = '£';
-                    player1.stones_hand-=1;
-                    
-                    box.innerHTML = 'Black needs to put down a stone.'
-                    if(player1.stones_hand==0 && player1.stones_atall>3){
-                        player1.action='move';
-                        box.innerHTML = 'Black needs to put down a stone.';
-                    }
-                    draw_the_field(stones);
-                    clicked_array = Array(24).fill(0);
-                    //check mills here
-                    //console.log(check_new_mills(stones_copy,stones));
-                    if(check_new_mills(stones_copy,stones)){
-                        //console.log(taking_stone_possible(stones,player2.color));
-                        if(taking_stone_possible(stones,player2.color)){
-                            box.innerHTML = 'White has a mill and can remove a stone.';
-                            new_mill=true;
-                        }else{
-                            box.innerHTML = 'White has a mill, but cannot remove a stone, as all stones are blocked.'
-                        }
-                    }
-                    
-                }
-            }
-            if(player1.action=='move'){
-            }
-        }
-        }else{
-            if (player2.human = 'human'){
-            if (player2.action=='put'){
-                if(stones[index]=='¤'){
-                    var stones_copy = Object.assign({},stones) ;
-                    stones[index] = '$';
-                    player2.stones_hand-=1;
-                    box.innerHTML = 'White needs to put down a stone.'
-                    if(player2.stones_hand==0 && player2.stones_atall>3){
-                        player2.action='move';
-                        box.innerHTML = 'White needs to move a stone.'
-                    }
-                    draw_the_field(stones);
-                    clicked_array = Array(24).fill(0);
-                    //check mills here
-                    if(check_new_mills(stones_copy,stones)){
-                        if(taking_stone_possible(stones,player1.color)){
-                            box.innerHTML = 'Black has a mill and can remove a stone.';
-                            new_mill=true;
-                        }else{
-                            box.innerHTML = 'Black has a mill, but cannot remove a stone, as all stones are blocked.'
-                        }
-                    }
-                    
-                }
-                
-            }if(player2.action=='move'){
-                
-            }
-            }
-        }
-        //change the state of the players 
-        if(player1.state==0){
-            player1.state=1;
-            player2.state=0;
-        }else{
-            player1.state=0;
-            player2.state=1;
-        }
-    
+        box.innerHTML='Game Over!!'
     }
 }
 /*-------------------------------------------------*/
@@ -371,6 +614,7 @@ function check_new_mills(stones_copy,stones){
         }
 
     }
+    return(false)
 }
 
 function contained_in_mill(index,stones){
@@ -418,5 +662,22 @@ function taking_stone_possible(stones,opp_color){
     return false;
 }
 
-
+function check_connected(idx1, idx2){
+    var indices = [];
+    for (var i = 0; i < 24; i++){
+        indices.push(i);
+    }
+    var rows_indices = create_rows(indices);
+    for (var j=0; j<rows_indices.length;j++){
+        var row = rows_indices[j];
+        if (row.includes(idx1)&&row.includes(idx2)){
+            var pos1 = row.indexOf(idx1);
+            var pos2 = row.indexOf(idx2);//either 0, 1, 2
+            if((pos1-pos2==1)||(pos2-pos1)==1){//check whether they are neighboring
+                return true;
+            }
+            
+        }
+    } 
+}
 
