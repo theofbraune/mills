@@ -167,6 +167,9 @@ body{
     height: 50px;
     
 }
+.arrowBtn{
+    font-size: 2rem;
+}
 
 .button_type_selector{
     display: flex;
