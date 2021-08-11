@@ -92,8 +92,9 @@ function initialize_game(){
     if (player1.human=='ai'){
         if (player2.human=='human'){
             //this will execute the AI method later
-            stones[4]='£';
-            box.innerHTML = 'Black needs to put down a stone.'
+            player1.stones_hand-=1;
+            ai_put_random(stones,'£');
+            box.innerHTML = 'Black needs to put down a stone.';
         }
         player2.state=1;
         player1.state=0;
@@ -238,7 +239,7 @@ draw_the_field(stones);
 function clicking(index){
     
     
-    
+    var idx = -1;
     //check whether we are in the case that we need to remove a stone
     if (new_mill==true){
         if(!contained_in_mill(index,stones)){
@@ -279,6 +280,7 @@ function clicking(index){
                         if (player2.action=='put'){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
+                            var stones_copy = Object.assign({},stones);
                             ai_put_random(stones,'$');
                             player2.stones_hand-=1;
                             if(player2.stones_hand==0 && player2.stones_atall>3){
@@ -293,7 +295,7 @@ function clicking(index){
                             }
         
                             //now check whether the AI has created a mill
-                            var stones_copy = Object.assign({},stones);
+                            
                             if(check_new_mills(stones_copy,stones)){
                                 console.log('THE AI HAS A MILL')
                                 //console.log(taking_stone_possible(stones,player2.color));
@@ -368,7 +370,7 @@ function clicking(index){
                                 console.log('THE AI HAS A MILL')
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player1.color)){
-                                    ai_take_random(stones,'£');
+                                    var idx = ai_take_random(stones,'£');
                                     //use the function to remove a stone
                                 }else{
                                     box.innerHTML = 'Black has a mill, but cannot remove a stone, as all stones are blocked.'
@@ -378,6 +380,19 @@ function clicking(index){
                             player1.state=0;
                             player2.state=1;
                             draw_the_field(stones);
+                            if(idx!=-1){
+                                var positions = array_of_positions(width,height);
+                                bt_test = document.getElementById(`bt_${idx}`);
+                                p = positions[idx];
+                                p1 = p[0];
+                                p2 = p[1];
+                                bt_test.style.left = `${p1+ct_x-15}px`;
+                                bt_test.style.top = `${p2+ct_y-15}px`;
+                                bt_test.style.width = '30px';
+                                bt_test.style.height = '30px';
+                                bt_test.style.background='red';
+                
+                            }
                         }
 
                     }
@@ -565,6 +580,7 @@ function clicking(index){
                     if (player2.action=='put'){
                         //var index = ai_put(stones,'$');
                         //stones[index] = '$';
+                        var stones_copy = Object.assign({},stones);
                         ai_put_random(stones,'$');
                         player2.stones_hand-=1;
                         if(player2.stones_hand==0 && player2.stones_atall>3){
@@ -579,13 +595,16 @@ function clicking(index){
                         }
 
                         //now check whether the AI has created a mill
-                        var stones_copy = Object.assign({},stones);
+                        
                         if(check_new_mills(stones_copy,stones)){
                             console.log('THE AI HAS A MILL')
                             //console.log(taking_stone_possible(stones,player2.color));
                             if(taking_stone_possible(stones,player1.color)){
-                                ai_take_random(stones,'£');
+                                
+                                var idx=ai_take_random(stones,'£');
                                 //use the function to remove a stone
+                                console.log(idx);
+                                console.log(stones);
                             }else{
                                 box.innerHTML = 'Black has a mill, but cannot remove a stone, as all stones are blocked.'
                             }
@@ -594,12 +613,26 @@ function clicking(index){
                         player1.state=1;
                         player2.state=0;
                     }
-                }
-                
-                
+                }                                
             }
             
             draw_the_field(stones);
+            //if the AI has created a mill, color the field, where the stone 
+            //was taken.
+            if(idx!=-1){
+                var positions = array_of_positions(width,height);
+                bt_test = document.getElementById(`bt_${idx}`);
+                p = positions[idx];
+                p1 = p[0];
+                p2 = p[1];
+                bt_test.style.left = `${p1+ct_x-15}px`;
+                bt_test.style.top = `${p2+ct_y-15}px`;
+                bt_test.style.width = '30px';
+                bt_test.style.height = '30px';
+                bt_test.style.background='red';
+
+            }
+            console.log(stones);
         }else{
             
             if (player2.human == 'human'){
@@ -627,8 +660,11 @@ function clicking(index){
                                 box.innerHTML = 'Black has a mill, but cannot remove a stone, as all stones are blocked.'
                             }
                         }
-                        player1.state=1;
-                        player2.state=0;
+                        if((player1.human=='human')||(new_mill)){
+                            player1.state=1;
+                            player2.state=0;
+                        }
+                        
                         
                     }
                     //check whether in the last step white is completely blocked
@@ -753,6 +789,7 @@ function clicking(index){
             if(player1.human=='ai'){
                 if (!new_mill){
                     if(player1.action=='put'){
+                        var stones_copy = Object.assign({},stones);
                         ai_put_random(stones,'£');
                         player1.stones_hand-=1;
                         if(player1.stones_hand==0 && player1.stones_atall>3){
@@ -766,12 +803,13 @@ function clicking(index){
                         }
 
                         //now check whether the AI has created a mill
-                        var stones_copy = Object.assign({},stones);
+                        
                         if(check_new_mills(stones_copy,stones)){
                             console.log('THE AI HAS A MILL')
                             //console.log(taking_stone_possible(stones,player2.color));
                             if(taking_stone_possible(stones,player2.color)){
-                                ai_take_random(stones,'$');
+                                var idx = ai_take_random(stones,'$');
+                                console.log(idx);
                                 //use the function to remove a stone
                             }else{
                                 box.innerHTML = 'White has a mill, but cannot remove a stone, as all stones are blocked.'
@@ -783,6 +821,19 @@ function clicking(index){
                     }
                 }
                 draw_the_field(stones);
+                if(idx!=-1){
+                    var positions = array_of_positions(width,height);
+                    bt_test = document.getElementById(`bt_${idx}`);
+                    p = positions[idx];
+                    p1 = p[0];
+                    p2 = p[1];
+                    bt_test.style.left = `${p1+ct_x-15}px`;
+                    bt_test.style.top = `${p2+ct_y-15}px`;
+                    bt_test.style.width = '30px';
+                    bt_test.style.height = '30px';
+                    bt_test.style.background='red';
+    
+                }
             }
         } 
         

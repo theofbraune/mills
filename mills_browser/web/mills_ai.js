@@ -1,3 +1,5 @@
+var value_stones = ['$','$','¤','$','£','¤','¤','£','¤','¤','£','£','¤','¤','¤','£','¤','$','¤','¤','¤','¤','¤','¤'];
+
 
 function checking_new(){
     console.log('this is the test for the new one');
@@ -15,7 +17,7 @@ function ai_put_random(stones,color){
         }
     }
     var index = Math.floor(Math.random() * possible_fields.length);
-    stones[possible_fields[index]]=color
+    stones[possible_fields[index]]=color;
     //return stones[possible_fields[index]];
 }
 
@@ -28,4 +30,6 @@ function ai_take_random(stones,color){
     }
     var index = Math.floor(Math.random() * possible_fields.length);
     stones[possible_fields[index]]='¤';
+    return(possible_fields[index])
 }
+
