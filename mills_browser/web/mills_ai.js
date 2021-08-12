@@ -112,6 +112,28 @@ function ai_random(stones,color,action){
         stones[rmove[1]] = color;
         return(rmove);
     }
+    else if(action=='jump'){
+        var possible_jumps = [];
+        
+        //create array with indices of all my stones
+        for (var i=0;i<stones.length;i++){
+            if (stones[i]==color){
+                for(var j=0;j<stones.length;j++){
+                    if(stones[j]=='¤'){
+                        var move = [i,j];
+                        possible_jumps.push(move);
+                    }
+        
+                }
+            }
+        }
+        var index = Math.floor(Math.random() * possible_jumps.length);
+        var rmove = possible_jumps[index];
+        stones[rmove[0]] = '¤';
+        stones[rmove[1]] = color;
+        return(rmove);
+        
+    }
 }
 
 function ai_take_random(stones,color){
