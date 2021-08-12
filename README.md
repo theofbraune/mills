@@ -15,4 +15,4 @@ Note that we do not need to open the interactive mode.
 
 The structure of both versions is similar. There is a Visualization, a programm for the data structure of the board and the players and a main game loop. The AI program is identical for both. Currently it is only possible to play against a random AI.
 
-It is now possible to play in the browser, but the AI is not working yet. So far the browser version is 100% in Javascript.
+It is now possible to play in the browser, also against the AI, but the AI just puts randomly. So far the browser version is 100% in Javascript.
