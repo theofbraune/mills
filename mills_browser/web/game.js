@@ -40,7 +40,6 @@ var positions = array_of_positions(width,height);
 var bt_now;
 const box = document.getElementById('msg_box');
 var new_mill=false;
-//var value_stones = ['$','$','¤','$','£','¤','¤','£','¤','¤','£','£','¤','¤','¤','£','¤','$','¤','¤','¤','¤','¤','¤'];
 var value_stones = ['$','$','¤','$','£','¤','¤','£','¤','¤','£','£','¤','¤','¤','£','¤','$','¤','¤','£','¤','¤','$'];
 var stones = Array(24).fill('¤');
 //var stones = value_stones;
@@ -51,6 +50,8 @@ var stones = Array(24).fill('¤');
 //Create the main game objects, the players and the game object
 //var main_game = new game('human','human');
 var main_game;
+
+var ai_type = 'random';
 
 //var player1 = new player('white',main_game.white);
 //var player2 = new player('black',main_game.black);
@@ -74,9 +75,11 @@ function initialize_game(){
         }
         if(bt_black=='AI <span class="arrowBtn" id="lb_1">↻</span>'){
             main_game = new game('human','ai')
+            ai_type='random';
         }
     }
     if (bt_white=='AI <span class="arrowBtn" id="lb_1">↻</span>'){
+        ai_type = 'random';
         if(bt_black=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
             main_game = new game('ai','human');
         }
@@ -94,7 +97,7 @@ function initialize_game(){
         if (player2.human=='human'){
             //this will execute the AI method later
             player1.stones_hand-=1;
-            ai_random(stones,'£','put');
+            ai_multi(stones,'£','put',ai_type);
             box.innerHTML = 'Black needs to put down a stone.';
         }
         player2.state=1;
@@ -239,6 +242,8 @@ draw_the_field(stones);
 //draw_the_field(value_stones);
 /*-------- Definition of our main function --------*/
 function clicking(index){
+    console.log(player1);
+    console.log(player2);
     var move_complete = false;//note: we will use this var, also for the jump!!
     var idx = -1;
     //check whether we are in the case that we need to remove a stone
@@ -282,7 +287,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_random(stones,'$','put');
+                            ai_multi(stones,'$','put',ai_type);
                             player2.stones_hand-=1;
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';
@@ -301,7 +306,7 @@ function clicking(index){
                                 console.log('THE AI HAS A MILL')
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player1.color)){
-                                    var idx = ai_take_random(stones,'£');
+                                    var idx = ai_multi(stones,'£','take',ai_type);
                                     player1.stones_atall-=1;
                                     if(player1.stones_atall==3){
                                         player1.action = 'jump';
@@ -332,7 +337,7 @@ function clicking(index){
                         }
                         else if (player2.action=='move'){
                             var stones_copy = Object.assign({},stones);
-                            ai_random(stones,'$','move');
+                            ai_multi(stones,'$','move',ai_type);
                             
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';  
@@ -351,7 +356,7 @@ function clicking(index){
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player1.color)){
                                     
-                                    var idx=ai_take_random(stones,'£');
+                                    var idx=ai_multi(stones,'£','take',ai_type);
                                     player1.stones_atall-=1;
                                     if(player1.stones_atall==3){
                                         player1.action = 'jump';
@@ -391,7 +396,7 @@ function clicking(index){
                         }
                         else if (player2.action=='jump'){
                             var stones_copy = Object.assign({},stones);
-                            ai_random(stones,'$','jump');
+                            ai_multi(stones,'$','jump',ai_type);
                             
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';  
@@ -410,7 +415,7 @@ function clicking(index){
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player1.color)){
                                     
-                                    var idx=ai_take_random(stones,'£');
+                                    var idx=ai_multi(stones,'£','take',ai_type);
                                     player1.stones_atall-=1;
                                     if(player1.stones_atall==3){
                                         player1.action = 'jump';
@@ -488,7 +493,7 @@ function clicking(index){
                         if (player1.action=='put'){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
-                            ai_random(stones,'£','put');
+                            ai_multi(stones,'£','put',ai_type);
                             player1.stones_hand-=1;
                             if(player1.stones_hand==0 && player2.stones_atall>3){
                                 player1.action='move';
@@ -507,7 +512,7 @@ function clicking(index){
                                 console.log('THE AI HAS A MILL')
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player1.color)){
-                                    var idx = ai_take_random(stones,'£');
+                                    var idx = ai_multi(stones,'£','take',ai_type);
                                     //use the function to remove a stone
                                 }else{
                                     box.innerHTML = 'Black has a mill, but cannot remove a stone, as all stones are blocked.'
@@ -535,7 +540,7 @@ function clicking(index){
 
                         else if (player1.action=='move'){
                             var stones_copy = Object.assign({},stones);
-                            ai_random(stones,'£','move');
+                            ai_multi(stones,'£','move',ai_type);
                             
                             if(player1.stones_hand==0 && player1.stones_atall>3){
                                 player2.action='move';  
@@ -552,7 +557,7 @@ function clicking(index){
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player1.color)){
                                     
-                                    var idx=ai_take_random(stones,'$');
+                                    var idx=ai_multi(stones,'$','take',ai_type);
                                     player2.stones_atall-=1;
                                     if(player2.stones_atall==3){
                                         player2.action = 'jump';
@@ -593,7 +598,7 @@ function clicking(index){
 
                         else if (player1.action=='jump'){
                             var stones_copy = Object.assign({},stones);
-                            ai_random(stones,'£','jump');
+                            ai_multi(stones,'£','jump',ai_type);
                             
                             if(player1.stones_hand==0 && player1.stones_atall>3){
                                 player2.action='move';  
@@ -610,7 +615,7 @@ function clicking(index){
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player1.color)){
                                     
-                                    var idx=ai_take_random(stones,'$');
+                                    var idx=ai_multi(stones,'$','take',ai_type);
                                     player2.stones_atall-=1;
                                     if(player2.stones_atall==3){
                                         player2.action = 'jump';
@@ -842,7 +847,7 @@ function clicking(index){
                         //var index = ai_put(stones,'$');
                         //stones[index] = '$';
                         var stones_copy = Object.assign({},stones);
-                        ai_random(stones,'$','put');
+                        ai_multi(stones,'$','put',ai_type);
                         player2.stones_hand-=1;
                         if(player2.stones_hand==0 && player2.stones_atall>3){
                             player2.action='move';
@@ -862,7 +867,7 @@ function clicking(index){
                             //console.log(taking_stone_possible(stones,player2.color));
                             if(taking_stone_possible(stones,player1.color)){
                                 
-                                var idx=ai_take_random(stones,'£');
+                                var idx=ai_multi(stones,'£','take',ai_type);
                                 player1.stones_atall-=1;
                                     if(player1.stones_atall==3){
                                         player1.action = 'jump';
@@ -888,7 +893,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_random(stones,'$','move');
+                            ai_multi(stones,'$','move',ai_type);
                             
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';  
@@ -900,7 +905,7 @@ function clicking(index){
                                 box.innerHTML = 'White needs to move a stone.'
                             }
                             if(player1.action=='jump'){
-                                box.innerHTML = 'White needs to move a jump.'
+                                box.innerHTML = 'White needs to jump.'
                             }
 
                             //now check whether the AI has created a mill
@@ -910,10 +915,11 @@ function clicking(index){
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player1.color)){
                                     
-                                    var idx=ai_take_random(stones,'£');
+                                    var idx=ai_multi(stones,'£','take',ai_type);
                                     player1.stones_atall-=1;
                                     if(player1.stones_atall==3){
                                         player1.action = 'jump';
+                                        box.innerHTML = 'White needs to jump.'
                                     }
                                     if(player1.stones_atall==2){
                                         main_game.gameover=true;
@@ -944,7 +950,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_random(stones,'$','jump');
+                            ai_multi(stones,'$','jump',ai_type);
                             
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';  
@@ -966,7 +972,7 @@ function clicking(index){
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player1.color)){
                                     
-                                    var idx=ai_take_random(stones,'£');
+                                    var idx=ai_multi(stones,'£','take',ai_type);
                                     player1.stones_atall-=1;
                                     if(player1.stones_atall==3){
                                         player1.action = 'jump';
@@ -1035,7 +1041,7 @@ function clicking(index){
                             //if we play against the AI we need to make one manual move
                             if(player1.human=='ai'){
                                 var stones_copy = Object.assign({},stones);
-                                ai_random(stones,'£','move');
+                                ai_multi(stones,'£','move',ai_type);
                                 if(player1.stones_hand==0 && player1.stones_atall>3){
                                     player1.action='move';  
                                 }
@@ -1048,7 +1054,7 @@ function clicking(index){
                                     //console.log(taking_stone_possible(stones,player2.color));
                                     if(taking_stone_possible(stones,player2.color)){
                                         
-                                        var idx=ai_take_random(stones,'$');
+                                        var idx=ai_multi(stones,'$','take',ai_type);
                                         player2.stones_atall-=1;
                                         if(player2.stones_atall==3){
                                             player1.action = 'jump';
@@ -1229,7 +1235,7 @@ function clicking(index){
                 if (!new_mill){
                     if(player1.action=='put'){
                         var stones_copy = Object.assign({},stones);
-                        ai_random(stones,'£','put');
+                        ai_multi(stones,'£','put',ai_type);
                         player1.stones_hand-=1;
                         if(player1.stones_hand==0 && player1.stones_atall>3){
                             //we need one white move manually here
@@ -1248,13 +1254,13 @@ function clicking(index){
                             console.log('THE AI HAS A MILL')
                             //console.log(taking_stone_possible(stones,player2.color));
                             if(taking_stone_possible(stones,player2.color)){
-                                var idx = ai_take_random(stones,'$');
+                                var idx = ai_multi(stones,'$','take',ai_type);
                                 console.log(idx);
-                                
+                                player2.stones_atall-=1;
                                 if(player2.stones_atall==3){
                                     player2.action = 'jump';
                                 }
-                                player2.stones_atall-=1;
+                                
                                 if(player2.stones_atall==2){
                                     main_game.gameover=true;
                                     box.innerHTML='Game Over! White has won.';
@@ -1274,7 +1280,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_random(stones,'£','move');
+                            ai_multi(stones,'£','move',ai_type);
                             if(player1.stones_hand==0 && player1.stones_atall>3){
                                 player1.action='move';  
                             }
@@ -1290,12 +1296,13 @@ function clicking(index){
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player2.color)){
                                     
-                                    var idx=ai_take_random(stones,'$');
-                                    
+                                    var idx=ai_multi(stones,'$','take',ai_type);
+                                    player2.stones_atall-=1;
                                     if(player2.stones_atall==3){
                                         player2.action = 'jump';
+                                        box.innerHTML = 'Black needs to jump.'
                                     }
-                                    player2.stones_atall-=1;
+                                    
                                     if(player2.stones_atall==2){
                                         main_game.gameover=true;
                                         box.innerHTML='Game Over! White has won.';
@@ -1325,7 +1332,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_random(stones,'£','jump');
+                            ai_multi(stones,'£','jump',ai_type);
                             if(player1.stones_hand==0 && player1.stones_atall>3){
                                 player1.action='move';  
                             }
@@ -1341,7 +1348,7 @@ function clicking(index){
                                 //console.log(taking_stone_possible(stones,player2.color));
                                 if(taking_stone_possible(stones,player2.color)){
                                     
-                                    var idx=ai_take_random(stones,'$');
+                                    var idx=ai_multi(stones,'$','take',ai_type);
                                     
                                     if(player2.stones_atall==3){
                                         player1.action = 'jump';

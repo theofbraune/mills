@@ -150,3 +150,13 @@ function ai_take_random(stones,color){
     return(possible_fields[index])
 }
 
+function ai_multi(stones,color,action,type){
+    if (type=='random'){
+        ai_random(stones,color,action);
+    }
+    if (action=='take'){
+        if(type=='random'){
+            return ai_take_random(stones,color);
+        }
+    }
+}
