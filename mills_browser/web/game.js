@@ -109,6 +109,7 @@ function initialize_game(){
     main_game.gameover=false;
 }
 
+//methods to change the content on the two buttons
 function switch_a() {
     const bt1 = document.getElementById('bt_cl_1');
     if(bt1.innerHTML=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
@@ -1020,6 +1021,26 @@ function clicking(index){
                 bt_test.style.background='red';
 
             }
+            //in the case of moving increase the radius of the field, where one has clicked
+            if(!(move_complete)){
+                if (clicked_array.includes(1)){
+                    if(clicked_array.includes(2)==false){
+                        console.log('now augment')
+                        var index_1 = clicked_array.indexOf(1);
+                        var positions = array_of_positions(width,height); 
+                        bt_test = document.getElementById(`bt_${index_1}`);
+                        p = positions[index_1];
+                        p1 = p[0];
+                        p2 = p[1];
+                        bt_test.style.left = `${p1+ct_x-30}px`;
+                        bt_test.style.top = `${p2+ct_y-30}px`;
+                        bt_test.style.width = '60px';
+                        bt_test.style.height = '60px';
+
+
+                    }
+                }
+            }
             console.log(stones);
         }else{
             
@@ -1392,6 +1413,27 @@ function clicking(index){
                     bt_test.style.height = '30px';
                     bt_test.style.background='red';
     
+                }
+            }
+
+            if(!(move_complete)&&(!(player2.action=='put'))){
+                console.log('augment now!!')
+                if (clicked_array.includes(1)){
+                    if(clicked_array.includes(2)==false){
+                        console.log('now augment')
+                        var index_1 = clicked_array.indexOf(1);
+                        var positions = array_of_positions(width,height); 
+                        bt_test = document.getElementById(`bt_${index_1}`);
+                        p = positions[index_1];
+                        p1 = p[0];
+                        p2 = p[1];
+                        bt_test.style.left = `${p1+ct_x-30}px`;
+                        bt_test.style.top = `${p2+ct_y-30}px`;
+                        bt_test.style.width = '60px';
+                        bt_test.style.height = '60px';
+
+
+                    }
                 }
             }
         } 
