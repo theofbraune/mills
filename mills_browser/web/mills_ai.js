@@ -1,9 +1,7 @@
 var value_stones = ['$','$','¤','$','£','¤','¤','£','¤','¤','£','£','¤','¤','¤','£','¤','$','¤','¤','¤','¤','¤','¤'];
 
 
-function checking_new(){
-    console.log('this is the test for the new one');
-}
+
 
 function create_rows(stones){
     /*Input: The array of the stones
@@ -14,6 +12,9 @@ function create_rows(stones){
 }
 
 function check_connected(idx1, idx2){
+    /*Input: Two index positions
+    Output: The information (boolean) whether these two are connected
+    */
     var indices = [];
     for (var i = 0; i < 24; i++){
         indices.push(i);
@@ -35,7 +36,7 @@ function check_connected(idx1, idx2){
 function generate_neighbours(index){
     /*
     Input: The index of a field.
-    Output: Array of neighbouring positions.
+    Output: Array of neighbouring positions as numbers.
     */
     var neighbours = [];
     for (var j=0;j<24;j++){
@@ -47,7 +48,7 @@ function generate_neighbours(index){
 }
 
 function contained_in_mill(index,stones){
-    /*Input: the index of a stone
+    /*Input: the index of a stone, stone array
     Output: Is this stone contained in a mill
     */
 
@@ -72,6 +73,17 @@ function contained_in_mill(index,stones){
     return false;
 }
 
+/*
+The AI methods for the min-max-algorithms
+*/
+function compute_score_static(player,opponent,stones){
+    
+}
+
+
+/*
+Specify the functions for the random AI
+*/
 function ai_random(stones,color,action){
     /*Input: The stone array and the color of the player
     Output: The modified stone array*/
@@ -150,6 +162,11 @@ function ai_take_random(stones,color){
     return(possible_fields[index])
 }
 
+
+
+/*
+This is the AI method that'll be called in the game js file with the possibility to specify the type of the AI
+*/
 function ai_multi(stones,color,action,type){
     if (type=='random'){
         ai_random(stones,color,action);

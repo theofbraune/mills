@@ -710,7 +710,7 @@ function clicking(index){
                             player1.state=0;
                             player2.state=1;
                         }
-                        
+                        move_complete = true;
                     }
                     
                 }
@@ -843,7 +843,7 @@ function clicking(index){
                 }
             }
             if (player2.human=='ai'){
-                if (!new_mill){
+                if ((!new_mill)&&(move_complete)){
                     if (player2.action=='put'){
                         //var index = ai_put(stones,'$');
                         //stones[index] = '$';
@@ -1123,7 +1123,7 @@ function clicking(index){
                             player1.state=1;
                             player2.state=0;
                         }
-                        
+                        move_complete = true;
                         
                     }
                     //check whether in the last step white is completely blocked
@@ -1253,7 +1253,7 @@ function clicking(index){
                 }
             }
             if(player1.human=='ai'){
-                if (!new_mill){
+                if ((!new_mill)&&(move_complete)){
                     if(player1.action=='put'){
                         var stones_copy = Object.assign({},stones);
                         ai_multi(stones,'£','put',ai_type);
