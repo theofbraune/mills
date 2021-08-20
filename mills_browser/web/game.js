@@ -240,11 +240,11 @@ function draw_the_field(stones){
     }
 }
 draw_the_field(stones);
-//draw_the_field(value_stones);
+draw_the_field(value_stones);
 /*-------- Definition of our main function --------*/
 function clicking(index){
-    console.log(player1);
-    console.log(player2);
+    //console.log(player1);
+    //console.log(player2);
     var move_complete = false;//note: we will use this var, also for the jump!!
     var idx = -1;
     //check whether we are in the case that we need to remove a stone
@@ -1025,7 +1025,7 @@ function clicking(index){
             if(!(move_complete)){
                 if (clicked_array.includes(1)){
                     if(clicked_array.includes(2)==false){
-                        console.log('now augment')
+                        //console.log('now augment')
                         var index_1 = clicked_array.indexOf(1);
                         var positions = array_of_positions(width,height); 
                         bt_test = document.getElementById(`bt_${index_1}`);
@@ -1041,7 +1041,7 @@ function clicking(index){
                     }
                 }
             }
-            console.log(stones);
+            //console.log(stones);
         }else{
             
             if (player2.human == 'human'){
@@ -1417,10 +1417,10 @@ function clicking(index){
             }
 
             if(!(move_complete)&&(!(player2.action=='put'))){
-                console.log('augment now!!')
+                //console.log('augment now!!')
                 if (clicked_array.includes(1)){
                     if(clicked_array.includes(2)==false){
-                        console.log('now augment')
+                        //console.log('now augment')
                         var index_1 = clicked_array.indexOf(1);
                         var positions = array_of_positions(width,height); 
                         bt_test = document.getElementById(`bt_${index_1}`);
@@ -1579,5 +1579,4 @@ function disable_buttons(){
         bt_test.disabled = true;
     }
 }
-
 

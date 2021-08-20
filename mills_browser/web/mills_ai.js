@@ -1,8 +1,22 @@
 var value_stones = ['$','$','¤','$','£','¤','¤','£','¤','¤','£','£','¤','¤','¤','£','¤','$','¤','¤','¤','¤','¤','¤'];
 
 
+//var test_player = new player('black','ai');
+//test_player.stones_atall = 8;
+//var test_opponent = new player('white','human');
+//test_opponent.stones_atall = 9;
 
-
+class leaf{
+    /* The class for the tree of the AI search algorithm.
+    The properties are the parent of the leave, the id number, the children and the score
+    */
+    constructor (parent,id){
+        this.parent = parent;
+        this.id = id;
+        this.score;
+        this.children = Array();
+    }
+}
 function create_rows(stones){
     /*Input: The array of the stones
     Output: An array that consists out of the rows of the field.
@@ -73,13 +87,69 @@ function contained_in_mill(index,stones){
     return false;
 }
 
+
+function check_new_mill(stones_old,stones){
+    for(var idx = 0; idx<24;idx++){
+        if(contained_in_mill(idx,stones)){
+            if(!(contained_in_mill(idx, stones_old))){
+                return true;
+            }
+        }
+    }
+}
+
 /*
 The AI methods for the min-max-algorithms
 */
-function compute_score_static(player,opponent,stones){
-    
+function convert_to_array(ar){
+    // Convert one of these weird 'deepcopy' array-objects into a proper array 
+    var test = Array();
+    var checker = true;
+    var index = 0;
+    while(checker){
+        if(typeof(ar[index])=='string'){
+            test.push(ar[index])
+            index++;
+        }else{
+            checker = false;
+        }
+    }
+    return test;
+}
+function compute_score_static(my_color,opponent_color,action,stones){
+    if(action=='put'){
+        var st_black;
+        var st_white;
+        var stones_copy = Object.assign({},stones);
+        stones_copy = convert_to_array(stones_copy);
+        stones_copy = stones_copy.sort();
+        var my_stones = stones_copy.lastIndexOf(my_color) - stones_copy.indexOf(my_color);
+        var opp_stones = stones_copy.lastIndexOf(opponent_color)-stones_copy.indexOf(opponent_color);
+        return(my_stones-opp_stones);
+    }
 }
 
+function possible_put(stones,player){
+    var new_states = Array();
+    for (var index = 0; index<24;index++){
+        var stones_copy = Object.assign({},stones);
+        if (stones_copy[index]=='¤'){
+            if(player.color=='black'){
+                stones_copy[index] = '$';
+            }
+            else{
+                stones_copy[index] = '£';
+            }
+            new_states.push(stones_copy);
+            
+        }
+    }
+    return new_states;
+}
+
+function minmax(stones, my_color,opp_color,action){
+    
+}
 
 /*
 Specify the functions for the random AI
@@ -177,3 +247,9 @@ function ai_multi(stones,color,action,type){
         }
     }
 }
+
+//console.log(possible_put(value_stones,test_player));
+
+
+
+//console.log(value_stones);
