@@ -1,22 +1,28 @@
 var value_stones = ['$','$','¤','$','£','¤','¤','£','¤','¤','£','£','¤','¤','¤','£','¤','$','¤','¤','¤','¤','¤','¤'];
-
-
-//var test_player = new player('black','ai');
-//test_player.stones_atall = 8;
-//var test_opponent = new player('white','human');
-//test_opponent.stones_atall = 9;
-
-class leaf{
-    /* The class for the tree of the AI search algorithm.
-    The properties are the parent of the leave, the id number, the children and the score
+class player{
+    /* The player of the game
+    State==0 means, that it is not their turn
+    State==1 means, that it is their turn
     */
-    constructor (parent,id){
-        this.parent = parent;
-        this.id = id;
-        this.score;
-        this.children = Array();
+    constructor (color,human){
+        this.color = color;
+        this.human = human;
+        this.stones_hand = 9;
+        this.stones_atall = 9;
+        this.action = 'put';
+        if (this.color == 'black'){
+            this.state = 0;
+        }else{
+            this.state = 1;
+        }
     }
 }
+
+var test_player = new player('black','ai');
+test_player.stones_hand = 5;
+var test_opponent = new player('white','human');
+test_opponent.stones_hand = 4;
+
 function create_rows(stones){
     /*Input: The array of the stones
     Output: An array that consists out of the rows of the field.
@@ -87,7 +93,6 @@ function contained_in_mill(index,stones){
     return false;
 }
 
-
 function check_new_mill(stones_old,stones){
     for(var idx = 0; idx<24;idx++){
         if(contained_in_mill(idx,stones)){
@@ -118,8 +123,6 @@ function convert_to_array(ar){
 }
 function compute_score_static(my_color,opponent_color,action,stones){
     if(action=='put'){
-        var st_black;
-        var st_white;
         var stones_copy = Object.assign({},stones);
         stones_copy = convert_to_array(stones_copy);
         stones_copy = stones_copy.sort();
@@ -127,14 +130,53 @@ function compute_score_static(my_color,opponent_color,action,stones){
         var opp_stones = stones_copy.lastIndexOf(opponent_color)-stones_copy.indexOf(opponent_color);
         return(my_stones-opp_stones);
     }
+    else if(action=='move'){
+        //here try later how one can improve the weights for a better score. 
+        var stones_copy = Object.assign({},stones);
+        stones_copy = convert_to_array(stones_copy);
+        stones_copy = stones_copy.sort();
+        var my_stones = stones_copy.lastIndexOf(my_color) - stones_copy.indexOf(my_color);
+        var opp_stones = stones_copy.lastIndexOf(opponent_color)-stones_copy.indexOf(opponent_color);
+        if(opp_stones<3){
+            return(10000);
+        }
+        if(my_stones<3){
+            return(-10000);
+        }
+        var my_moves = possible_moves(stones,my_color);
+        var opp_moves = possible_moves(stones,opponent_color);
+        if(opp_moves.length==0){
+            return(10000);
+        }
+        else if(my_moves.length==0){
+            return(-10000);
+        }
+        return(100*(my_stones-opp_stones)-opp_moves.length+0.2*(my_moves.length));
+    }
+    else if(action=='jump'){
+        var stones_copy = Object.assign({},stones);
+        stones_copy = convert_to_array(stones_copy);
+        stones_copy = stones_copy.sort();
+        var my_stones = stones_copy.lastIndexOf(my_color) - stones_copy.indexOf(my_color);
+        var opp_stones = stones_copy.lastIndexOf(opponent_color)-stones_copy.indexOf(opponent_color);
+        if(opp_stones<3){
+            return(10000);
+        }
+        if(my_stones<3){
+            return(-10000);
+        }
+        return(my_stones-opp_stones);
+
+    }
 }
 
-function possible_put(stones,player){
+function possible_put(stones,color){
     var new_states = Array();
     for (var index = 0; index<24;index++){
         var stones_copy = Object.assign({},stones);
+        stones_copy = convert_to_array(stones_copy);
         if (stones_copy[index]=='¤'){
-            if(player.color=='black'){
+            if(color=='$'){
                 stones_copy[index] = '$';
             }
             else{
@@ -147,8 +189,117 @@ function possible_put(stones,player){
     return new_states;
 }
 
-function minmax(stones, my_color,opp_color,action){
+function possible_moves(stones,color){
+    /*Input: The stone configuration of a board and a color
+    Output: The array of all possible moves.
+    */
+    var p_moves = [];
+    var my_fields = [];
+    //create array with indices of all my stones
+    for (var i=0;i<stones.length;i++){
+        if (stones[i]==color){
+            my_fields.push(i)
+        }
+    }
+    for (var j=0;j<my_fields.length;j++){
+        //generate array of each neighbour
+        var nbs = generate_neighbours(my_fields[j]);
+        for (var k = 0; k<nbs.length;k++){
+            //check whether the neighbouring field is free
+            if(stones[nbs[k]]=='¤'){
+                var move = [my_fields[j],nbs[k]];
+                p_moves.push(move);
+            }
+        }
+    }
+    var new_states = Array();
+    for (var ind = 0; ind<p_moves.length;ind++){
+        var stones_copy = Object.assign({},stones);
+        stones_copy = convert_to_array(stones_copy);
+        var id1 = p_moves[ind][0];
+        var id2 = p_moves[ind][1];
+        stones_copy[id1] = '¤';
+        stones_copy[id2] = color;
+        new_states.push(stones_copy); 
+    }
+    return(new_states)
+}
+
+function possible_jumps(stones,color){
+    var p_jumps = [];
+        
+    //create array with indices of all my stones
+    for (var i=0;i<stones.length;i++){
+        if (stones[i]==color){
+            for(var j=0;j<stones.length;j++){
+                if(stones[j]=='¤'){
+                    var move = [i,j];
+                    p_jumps.push(move);
+                }
     
+            }
+        }
+    }
+    var new_states = Array();
+    for (var ind = 0; ind<p_moves.length;ind++){
+        var stones_copy = Object.assign({},stones);
+        stones_copy = convert_to_array(stones_copy);
+        var id1 = p_jumps[ind][0];
+        var id2 = p_jumps[ind][1];
+        stones_copy[id1] = '¤';
+        stones_copy[id2] = color;
+        new_states.push(stones_copy); 
+    }
+    return(new_states)
+
+}
+
+
+function minmax_rec(stones, color,action){
+/* 
+Have in mind, that in this case I am the opponent ;-) and 'my' is the AI.
+*/
+    var new_states;
+    if(action == 'put'){
+        new_states = possible_put(stones,color);
+    }
+    else if(action =='move' ){
+        new_states = possible_moves(stones,color);
+    }
+    else if(action =='jump'){
+        new_states = possible_jumps(stones,color);
+    }
+
+    //now check whether one of the new states has a mill. Then add all the possible states with a removed stone
+    for (var j=0;j<new_states.length;j++){
+        if (check_new_mill(stones,new_states[j])){
+            //learn how to do array slicing with js. No clue how to do that
+            //create the second array -parallel- with the information about the game configurations.
+        }
+    }
+    return new_states;
+}
+
+function minmax(stones, my_player,my_opp,deep){
+    /*
+    Input: The stone configuration of the field, both the players to determine the necessary action
+    Output: Hopfully the best action. 
+    For now without alpha/beta pruning.
+    */
+    var action = my_player.action;
+    var my_hand = my_player.stones_hand;
+    var opp_hand = my_player.stones_hand;
+    var my_st = my_player.stones_atall;
+    var opp_st = my_player.stones_atall;
+
+    //do recursion with all these values as well. Otherwise really tough to do that
+
+    var possible_states = minmax_rec(stones,my_player.color,action);
+    var tree = Object.assign({},possible_states);
+    console.log(tree);
+     
+
+
 }
 
 /*
@@ -250,6 +401,4 @@ function ai_multi(stones,color,action,type){
 
 //console.log(possible_put(value_stones,test_player));
 
-
-
-//console.log(value_stones);
+minmax(value_stones,test_player,test_opponent,2)

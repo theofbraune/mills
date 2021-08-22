@@ -1,9 +1,10 @@
 /*-------- Declaration of classes -------- */
+/*
 class player{
-    /* The player of the game
+     The player of the game
     State==0 means, that it is not their turn
     State==1 means, that it is their turn
-    */
+    
     constructor (color,human){
         this.color = color;
         this.human = human;
@@ -17,6 +18,7 @@ class player{
         }
     }
 }
+*/
 
 class game{
     /* Indicate at the construction whether 2 humans play against each other or whether an ai should play.
@@ -40,7 +42,7 @@ var positions = array_of_positions(width,height);
 var bt_now;
 const box = document.getElementById('msg_box');
 var new_mill=false;
-var value_stones = ['$','$','¤','$','£','¤','¤','£','¤','¤','£','£','¤','¤','¤','£','¤','$','¤','¤','£','¤','¤','$'];
+//var value_stones = ['$','$','¤','$','£','¤','¤','£','¤','¤','£','£','¤','¤','¤','£','¤','$','¤','¤','£','¤','¤','$'];
 var stones = Array(24).fill('¤');
 //var stones = value_stones;
 
@@ -1579,4 +1581,5 @@ function disable_buttons(){
         bt_test.disabled = true;
     }
 }
+
 
