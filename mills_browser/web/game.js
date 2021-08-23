@@ -75,17 +75,37 @@ function initialize_game(){
         if(bt_black=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
             main_game = new game('human','human');
         }
-        if(bt_black=='AI <span class="arrowBtn" id="lb_1">↻</span>'){
-            main_game = new game('human','ai')
+        if(bt_black=='random AI <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('human','ai');
             ai_type='random';
+            console.log('test');
+        }
+        if(bt_black=='smart AI <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('human','ai');
+            ai_type='smart';
         }
     }
-    if (bt_white=='AI <span class="arrowBtn" id="lb_1">↻</span>'){
+    if (bt_white=='random AI <span class="arrowBtn" id="lb_1">↻</span>'){
         ai_type = 'random';
         if(bt_black=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
             main_game = new game('ai','human');
         }
-        if(bt_black=='AI <span class="arrowBtn" id="lb_1">↻</span>'){
+        if(bt_black=='random AI <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('ai','ai')
+        }
+        if(bt_black=='smart AI <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('ai','ai')
+        }
+    }
+    if (bt_white=='smart AI <span class="arrowBtn" id="lb_1">↻</span>'){
+        ai_type = 'smart';
+        if(bt_black=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('ai','human');
+        }
+        if(bt_black=='random AI <span class="arrowBtn" id="lb_1">↻</span>'){
+            main_game = new game('ai','ai')
+        }
+        if(bt_black=='smart AI <span class="arrowBtn" id="lb_1">↻</span>'){
             main_game = new game('ai','ai')
         }
     }
@@ -99,7 +119,7 @@ function initialize_game(){
         if (player2.human=='human'){
             //this will execute the AI method later
             player1.stones_hand-=1;
-            ai_multi(stones,'£','put',ai_type);
+            stones = ai_multi(stones,'£','put',ai_type);
             box.innerHTML = 'Black needs to put down a stone.';
         }
         player2.state=1;
@@ -115,8 +135,10 @@ function initialize_game(){
 function switch_a() {
     const bt1 = document.getElementById('bt_cl_1');
     if(bt1.innerHTML=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
-        bt1.innerHTML='AI <span class="arrowBtn" id="lb_1">↻</span>';
-    }else{
+        bt1.innerHTML='random AI <span class="arrowBtn" id="lb_1">↻</span>';
+    }else if(bt1.innerHTML=='random AI <span class="arrowBtn" id="lb_1">↻</span>'){
+        bt1.innerHTML='smart AI <span class="arrowBtn" id="lb_1">↻</span>';
+    }else if(bt1.innerHTML=='smart AI <span class="arrowBtn" id="lb_1">↻</span>'){
         bt1.innerHTML='Human <span class="arrowBtn" id="lb_1">↻</span>';
     }
 }
@@ -124,8 +146,10 @@ function switch_a() {
 function switch_b() {
     const bt1 = document.getElementById('bt_cl_2');
     if(bt1.innerHTML=='Human <span class="arrowBtn" id="lb_1">↻</span>'){
-        bt1.innerHTML='AI <span class="arrowBtn" id="lb_1">↻</span>';
-    }else{
+        bt1.innerHTML='random AI <span class="arrowBtn" id="lb_1">↻</span>';
+    }else if(bt1.innerHTML=='random AI <span class="arrowBtn" id="lb_1">↻</span>'){
+        bt1.innerHTML='smart AI <span class="arrowBtn" id="lb_1">↻</span>';
+    }else if(bt1.innerHTML=='smart AI <span class="arrowBtn" id="lb_1">↻</span>'){
         bt1.innerHTML='Human <span class="arrowBtn" id="lb_1">↻</span>';
     }
 }
@@ -242,7 +266,7 @@ function draw_the_field(stones){
     }
 }
 draw_the_field(stones);
-draw_the_field(value_stones);
+//draw_the_field(value_stones);
 /*-------- Definition of our main function --------*/
 function clicking(index){
     //console.log(player1);
@@ -290,7 +314,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_multi(stones,'$','put',ai_type);
+                            stones = ai_multi(stones,'$','put',ai_type);
                             player2.stones_hand-=1;
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';
@@ -340,7 +364,7 @@ function clicking(index){
                         }
                         else if (player2.action=='move'){
                             var stones_copy = Object.assign({},stones);
-                            ai_multi(stones,'$','move',ai_type);
+                            stones = ai_multi(stones,'$','move',ai_type);
                             
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';  
@@ -399,7 +423,7 @@ function clicking(index){
                         }
                         else if (player2.action=='jump'){
                             var stones_copy = Object.assign({},stones);
-                            ai_multi(stones,'$','jump',ai_type);
+                            stones = ai_multi(stones,'$','jump',ai_type);
                             
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';  
@@ -496,7 +520,7 @@ function clicking(index){
                         if (player1.action=='put'){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
-                            ai_multi(stones,'£','put',ai_type);
+                            stones = ai_multi(stones,'£','put',ai_type);
                             player1.stones_hand-=1;
                             if(player1.stones_hand==0 && player2.stones_atall>3){
                                 player1.action='move';
@@ -543,7 +567,7 @@ function clicking(index){
 
                         else if (player1.action=='move'){
                             var stones_copy = Object.assign({},stones);
-                            ai_multi(stones,'£','move',ai_type);
+                            stones = ai_multi(stones,'£','move',ai_type);
                             
                             if(player1.stones_hand==0 && player1.stones_atall>3){
                                 player2.action='move';  
@@ -601,7 +625,7 @@ function clicking(index){
 
                         else if (player1.action=='jump'){
                             var stones_copy = Object.assign({},stones);
-                            ai_multi(stones,'£','jump',ai_type);
+                            stones = ai_multi(stones,'£','jump',ai_type);
                             
                             if(player1.stones_hand==0 && player1.stones_atall>3){
                                 player2.action='move';  
@@ -850,7 +874,9 @@ function clicking(index){
                         //var index = ai_put(stones,'$');
                         //stones[index] = '$';
                         var stones_copy = Object.assign({},stones);
-                        ai_multi(stones,'$','put',ai_type);
+                        console.log(ai_type);
+                        stones = ai_multi(stones,'$','put',ai_type);
+                        console.log(stones);
                         player2.stones_hand-=1;
                         if(player2.stones_hand==0 && player2.stones_atall>3){
                             player2.action='move';
@@ -864,7 +890,7 @@ function clicking(index){
                         }
 
                         //now check whether the AI has created a mill
-                        
+                        console.log(stones);
                         if(check_new_mills(stones_copy,stones)){
                             console.log('THE AI HAS A MILL')
                             //console.log(taking_stone_possible(stones,player2.color));
@@ -896,7 +922,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_multi(stones,'$','move',ai_type);
+                            stones = ai_multi(stones,'$','move',ai_type);
                             
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';  
@@ -953,7 +979,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_multi(stones,'$','jump',ai_type);
+                            stones = ai_multi(stones,'$','jump',ai_type);
                             
                             if(player2.stones_hand==0 && player2.stones_atall>3){
                                 player2.action='move';  
@@ -1064,7 +1090,7 @@ function clicking(index){
                             //if we play against the AI we need to make one manual move
                             if(player1.human=='ai'){
                                 var stones_copy = Object.assign({},stones);
-                                ai_multi(stones,'£','move',ai_type);
+                                stones = ai_multi(stones,'£','move',ai_type);
                                 if(player1.stones_hand==0 && player1.stones_atall>3){
                                     player1.action='move';  
                                 }
@@ -1258,7 +1284,7 @@ function clicking(index){
                 if ((!new_mill)&&(move_complete)){
                     if(player1.action=='put'){
                         var stones_copy = Object.assign({},stones);
-                        ai_multi(stones,'£','put',ai_type);
+                        stones = ai_multi(stones,'£','put',ai_type);
                         player1.stones_hand-=1;
                         if(player1.stones_hand==0 && player1.stones_atall>3){
                             //we need one white move manually here
@@ -1303,7 +1329,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_multi(stones,'£','move',ai_type);
+                            stones = ai_multi(stones,'£','move',ai_type);
                             if(player1.stones_hand==0 && player1.stones_atall>3){
                                 player1.action='move';  
                             }
@@ -1355,7 +1381,7 @@ function clicking(index){
                             //var index = ai_put(stones,'$');
                             //stones[index] = '$';
                             var stones_copy = Object.assign({},stones);
-                            ai_multi(stones,'£','jump',ai_type);
+                            stones = ai_multi(stones,'£','jump',ai_type);
                             if(player1.stones_hand==0 && player1.stones_atall>3){
                                 player1.action='move';  
                             }

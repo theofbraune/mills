@@ -18,10 +18,21 @@ class player{
     }
 }
 
+
+class field{
+    constructor(stones){
+        this.stones = stones;
+        this.hasmill = false;
+        this.index_taken = -1;
+    }
+}
+
 var test_player = new player('black','ai');
 test_player.stones_hand = 5;
 var test_opponent = new player('white','human');
 test_opponent.stones_hand = 4;
+
+var where_mill; //this is the variable that we will use to save the index of the position, where we took the stone away 
 
 function create_rows(stones){
     /*Input: The array of the stones
@@ -112,7 +123,7 @@ function convert_to_array(ar){
     var checker = true;
     var index = 0;
     while(checker){
-        if(typeof(ar[index])=='string'){
+        if((typeof(ar[index])=='string')||(typeof ar[index]=='object')){
             test.push(ar[index])
             index++;
         }else{
@@ -171,6 +182,9 @@ function compute_score_static(my_color,opponent_color,action,stones){
 }
 
 function possible_put(stones,color){
+    /*Input: the stone configuration and the color
+    Output: An array with all the possible stone configurations as a field object, such that we can 
+    */
     var new_states = Array();
     for (var index = 0; index<24;index++){
         var stones_copy = Object.assign({},stones);
@@ -181,9 +195,9 @@ function possible_put(stones,color){
             }
             else{
                 stones_copy[index] = '£';
-            }
+            }           
+            stones_copy = new field(stones_copy);
             new_states.push(stones_copy);
-            
         }
     }
     return new_states;
@@ -191,7 +205,7 @@ function possible_put(stones,color){
 
 function possible_moves(stones,color){
     /*Input: The stone configuration of a board and a color
-    Output: The array of all possible moves.
+    Output: The array with all possible configurations in the field datastructure.
     */
     var p_moves = [];
     var my_fields = [];
@@ -220,6 +234,7 @@ function possible_moves(stones,color){
         var id2 = p_moves[ind][1];
         stones_copy[id1] = '¤';
         stones_copy[id2] = color;
+        stones_copy = new field(stones_copy);
         new_states.push(stones_copy); 
     }
     return(new_states)
@@ -248,6 +263,7 @@ function possible_jumps(stones,color){
         var id2 = p_jumps[ind][1];
         stones_copy[id1] = '¤';
         stones_copy[id2] = color;
+        stones_copy = new field(stones_copy);
         new_states.push(stones_copy); 
     }
     return(new_states)
@@ -255,50 +271,126 @@ function possible_jumps(stones,color){
 }
 
 
-function minmax_rec(stones, color,action){
+function possible_take(field_bef, opp_color){
+    /*
+    Input: The field datastructure with the stone configuration, the opponent color
+    Output: The array of all possible field configurations with information where the stone was taken.
+    */
+    var config = field_bef.stones;
+    var poss_after = Array();
+    var new_field;
+    for (var i=0;i<config.length;i++){
+        if(config[i]==opp_color){
+            var stones_copy = Object.assign({},config);
+            stones_copy = convert_to_array(stones_copy);
+            //check whether there is a mill, then push the copy in the array.
+            stones_copy[i] = '¤'
+            new_field = new field(stones_copy);
+            new_field.hasmill = true;
+            new_field.index_taken = i;
+            poss_after.push(new_field);
+        }
+    }
+    return poss_after;
+}
+
+function findIndexOfGreatest(array) {
+    var greatest;
+    var indexOfGreatest;
+    for (var i = 0; i < array.length; i++) {
+      if (!greatest || array[i] > greatest) {
+        greatest = array[i];
+        indexOfGreatest = i;
+      }
+    }
+    return indexOfGreatest;
+  }
+
+function minmax_rec(stones, my_color,opp_color,action){
 /* 
 Have in mind, that in this case I am the opponent ;-) and 'my' is the AI.
 */
     var new_states;
     if(action == 'put'){
-        new_states = possible_put(stones,color);
+        new_states = possible_put(stones,my_color);
     }
     else if(action =='move' ){
-        new_states = possible_moves(stones,color);
+        new_states = possible_moves(stones,my_color);
     }
     else if(action =='jump'){
-        new_states = possible_jumps(stones,color);
+        new_states = possible_jumps(stones,my_color);
     }
-
+    //console.log(new_states);
     //now check whether one of the new states has a mill. Then add all the possible states with a removed stone
     for (var j=0;j<new_states.length;j++){
-        if (check_new_mill(stones,new_states[j])){
+        var st_after = new_states[j].stones;
+        if (check_new_mill(stones,st_after)){
+            
             //learn how to do array slicing with js. No clue how to do that
             //create the second array -parallel- with the information about the game configurations.
+            var after_mill = possible_take(new_states[j],opp_color);
+            
+            new_states[j] = after_mill;
         }
     }
+    new_states =  new_states.flat();
     return new_states;
 }
 
-function minmax(stones, my_player,my_opp,deep){
+function minmax(stone_array, my_player,action,deep){
     /*
     Input: The stone configuration of the field, both the players to determine the necessary action
     Output: Hopfully the best action. 
     For now without alpha/beta pruning.
-    */
+    
     var action = my_player.action;
     var my_hand = my_player.stones_hand;
-    var opp_hand = my_player.stones_hand;
+    //var opp_hand = my_player.stones_hand; 
     var my_st = my_player.stones_atall;
-    var opp_st = my_player.stones_atall;
+    //var opp_st = my_player.stones_atall;
 
+    //do the color transformation, because I skrewed up and cannot change it anymore :(
+    if(my_player.color=='black'){
+        var mcl = '$';
+        var opp_cl = '£';
+    }
+    else{
+        mcl = '£';
+        opp_cl = '$';
+    }
+    */
+
+    //fix this for the other states as well :)
+
+    if(my_player == '$'){
+        var mcl = '$';
+        var opp_cl = '£';
+    }else{
+        mcl = '£';
+        opp_cl = '$'; 
+    }
     //do recursion with all these values as well. Otherwise really tough to do that
 
-    var possible_states = minmax_rec(stones,my_player.color,action);
+    var possible_states = minmax_rec(stone_array,mcl,opp_cl,action);
+    
     var tree = Object.assign({},possible_states);
-    console.log(tree);
-     
+    
+    tree = convert_to_array(tree);
+    var scores = Array(tree.length);
+    
+    //for now, only for deepness 0
+    for (var ind = 0; ind<tree.length; ind++){
+        scores[ind] = compute_score_static(mcl,opp_cl,action,tree[ind].stones);
+    }
+    
+    
+    
+    var index_next_state = findIndexOfGreatest(scores);
+    if (possible_states[index_next_state].hasmill){
+        where_mill = possible_states[index_next_state].index_taken; //overwrite the dummy variable with the index, where we took the stone away  
+    }
 
+    return possible_states[index_next_state].stones;
 
 }
 
@@ -343,7 +435,7 @@ function ai_random(stones,color,action){
         var rmove = possible_moves[index];
         stones[rmove[0]] = '¤';
         stones[rmove[1]] = color;
-        return(rmove);
+        //return(rmove);
     }
     else if(action=='jump'){
         var possible_jumps = [];
@@ -364,9 +456,11 @@ function ai_random(stones,color,action){
         var rmove = possible_jumps[index];
         stones[rmove[0]] = '¤';
         stones[rmove[1]] = color;
-        return(rmove);
+        //return(rmove);
         
     }
+
+    return stones;
 }
 
 function ai_take_random(stones,color){
@@ -390,15 +484,28 @@ This is the AI method that'll be called in the game js file with the possibility
 */
 function ai_multi(stones,color,action,type){
     if (type=='random'){
-        ai_random(stones,color,action);
-    }
-    if (action=='take'){
-        if(type=='random'){
+        if (action=='take'){
             return ai_take_random(stones,color);
+        }else{
+            return ai_random(stones,color,action);
+        }
+        
+    }
+
+    if (type=='smart'){
+        if (action=='take'){
+            return where_mill;
+        }else{
+           return minmax(stones,color,action,0);
         }
     }
+    
+
 }
 
 //console.log(possible_put(value_stones,test_player));
 
-minmax(value_stones,test_player,test_opponent,2)
+//console.log(minmax(value_stones,test_player,test_opponent,0));
+//console.log(minmax_rec(value_stones,'£','$','put'));
+//console.log(minmax_rec(value_stones,m,my_opp.color,action))
+//console.log(minmax(value_stones,test_player,test_opponent,0));
